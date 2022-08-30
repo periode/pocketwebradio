@@ -5,7 +5,7 @@
 //-- https://reactnative.dev/docs/navigation
 //-- https://reactnative.dev/docs/network
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Audio } from 'expo-av';
 import type { Node } from 'react';
 import {
@@ -18,19 +18,44 @@ import {
   View,
 } from 'react-native';
 
-const Station = ({ name, uri }): Node => {
+const Station = ({ name, src }): Node => {
   const isDarkMode = useColorScheme() === 'dark';
   const [statusText, setStatusText] = useState('idle')
+  const [isLoaded, setLoaded] = useState(false)
+  const {sound} = useRef()
+
   const handlePress = () => {
-    if (statusText === 'idle'){
-      setStatusText('tuning in to ' + uri)
-      playRadio(uri)
-    }else{
+    tuneRadio(src)
+    if (statusText === 'idle') {
+      setStatusText('tuning in to ' + src)
+    } else {
       setStatusText('idle')
     }
-    
-    
   }
+
+  async function tuneRadio() {
+    if (!isLoaded) {
+      console.log(`loading ${src}...`);
+      try {
+        const { sound } = await Audio.Sound.createAsync({ uri: src }, { shouldPlay: true });
+        this.sound = sound
+        setLoaded(true)
+        console.log('loaded!')
+      } catch (e) {
+        console.log(`missed! ${e}`);
+      }
+    } else {
+      console.log(`unloading ${src}...`);
+      try {
+        await this.sound.unloadAsync()
+        setLoaded(false)
+        console.log(`unloaded!`);
+      } catch (e) {
+        console.log(`failed to unload! ${e}`);
+      }
+    }
+  }
+
   return (
     <View style={styles.stationContainer}>
       <Text
@@ -76,35 +101,8 @@ const Header = (): Node => {
   );
 };
 
-let sound = null
-async function playRadio(_uri) {
-  if(sound == null){
-    console.log('loading', _uri);
-    try {
-      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-      //-- should be using loadAsync here, cause looks like the sound is not playing back
-      sound = await Audio.Sound.createAsync(
-        { uri: _uri },
-        { shouldPlay: true }
-      );
-      await sound.playAsync()
-      console.log('loaded')
-    } catch (e){
-      console.log('missed', e);
-    }
-  }else{
-    console.log('unloading');
-    try {
-      await sound.unloadAsync()
-    }catch (e){
-      console.log('failed to unload', e);
-    }
-    
-    sound = null
-  }
-}
-
 const App: () => Node = () => {
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -124,13 +122,13 @@ const App: () => Node = () => {
             backgroundColor: isDarkMode ? 'ivory' : 'black',
           }}>
           <Header />
-          <Station name="france inter paris" uri="http://icecast.radiofrance.fr/fip-hifi.aac">
+          <Station name="france inter paris" src="http://icecast.radiofrance.fr/fip-hifi.aac">
 
           </Station>
-          <Station name="kapital" uri="https://radiokapitalpl.out.airtime.pro/radiokapitalpl_a">
+          <Station name="kapital" src="https://radiokapitalpl.out.airtime.pro/radiokapitalpl_a">
 
           </Station>
-          <Station name="mephisto" uri="http://radiostream.radio.uni-leipzig.de:8000/mephisto976_livestream.mp3">
+          <Station name="mephisto" src="http://radiostream.radio.uni-leipzig.de:8000/mephisto976_livestream.mp3">
 
           </Station>
         </View>
