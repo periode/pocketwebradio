@@ -64,7 +64,7 @@ const Station = ({ name, src }): Node => {
           styles.stationTitle,
           {
             fontFamily: 'Inter',
-            color: isDarkMode ? 'black' : 'ivory'
+            color: isDarkMode ? 'ivory' : 'black'
           },
         ]}>
         {name}
@@ -73,7 +73,7 @@ const Station = ({ name, src }): Node => {
         style={[
           styles.stationDescription,
           {
-            color: isDarkMode ? 'black' : 'ivory',
+            color: isDarkMode ? 'ivory' : 'black',
             fontSize: 12,
             fontStyle: 'italic'
           },
@@ -92,7 +92,7 @@ const Header = (): Node => {
         style={[
           styles.headerText,
           {
-            color: isDarkMode ? 'black' : 'ivory'
+            color: isDarkMode ? 'ivory' : 'black'
           },
         ]}>
         webradios
@@ -106,10 +106,9 @@ const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? 'ivory' : 'black',
+    backgroundColor: isDarkMode ? 'black' : 'ivory',
     flex: 1,
   };
-
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -119,7 +118,7 @@ const App: () => Node = () => {
         style={backgroundStyle}>
         <View
           style={{
-            backgroundColor: isDarkMode ? 'ivory' : 'black',
+            backgroundColor: isDarkMode ? 'black' : 'ivory',
           }}>
           <Header />
           <Station name="france inter paris" src="http://icecast.radiofrance.fr/fip-hifi.aac">
