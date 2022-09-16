@@ -25,7 +25,7 @@ const Station = ({ name, src }): Node => {
   const handlePlay = (_stream) => {
     tuneRadio(_stream)
     if (statusText === 'idle') {
-      setStatusText('tuning in to ' + src)
+      setStatusText('tuning in')
     } else {
       setStatusText('idle')
     }
@@ -46,12 +46,21 @@ const Station = ({ name, src }): Node => {
         console.log(`missed! ${e}`);
       }
     } else {
-      console.log(`unloading ${src}...`);
+      console.log(`unloading first ${src}...`);
       try {
         await _stream.unloadAsync()
         console.log(`unloaded!`);
       } catch (e) {
         console.log(`failed to unload! ${e}`);
+      }
+
+      console.log(`loading ${src}...`);
+      try {
+        //-- add properties to play audio when in bg and locked
+        await _stream.loadAsync({ uri: src }, { shouldPlay: true })
+        console.log('loaded!')
+      } catch (e) {
+        console.log(`missed! ${e}`);
       }
     }
   }
@@ -61,7 +70,7 @@ const Station = ({ name, src }): Node => {
       <Tuner.Consumer>
         {stream => (
           <Text
-          onPress={() => {handlePlay(stream)}}
+            onPress={() => { handlePlay(stream) }}
             style={[styles.stationTitle]}>
             {name}
           </Text>
@@ -118,8 +127,23 @@ const App: () => Node = () => {
 
   const setupStream = async () => {
     await Audio.setAudioModeAsync({
-      staysActiveInBackground: true
+      staysActiveInBackground: true,
+      playThroughEarpieceAndroid: false
     })
+  }
+
+  async function handleTuneOut(_stream) {
+    const soundStatus = await _stream.getStatusAsync()
+    console.log(`tuning out...`);
+
+    if (soundStatus.isLoaded) {
+      try {
+        await stream.unloadAsync()
+        console.log(`unloaded!`);
+      } catch (e) {
+        console.log(`failed to unload! ${e}`);
+      }
+    }
   }
 
   setupStream()
@@ -127,25 +151,34 @@ const App: () => Node = () => {
   const stream = new Audio.Sound()
 
   let stationElements = []
-  for(let i = 0; i < stations.length; i++){
-    stationElements.push(<Station name={stations[i].name} src={stations[i].src}></Station>)
+  for (let i = 0; i < stations.length; i++) {
+    stationElements.push(<Station name={stations[i].name} src={stations[i].src} key={stations[i].name}></Station>)
   }
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={styles.backgroundStyle}>
-        <View
-          style={styles.foregroundStyle}>
-          <Header />
-          <Tuner.Provider value={stream}>
-            {stationElements}
-          </Tuner.Provider>
-        </View>
-      </ScrollView>
+      <Tuner.Provider value={stream}>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={styles.backgroundStyle}>
+          <View
+            style={styles.foregroundStyle}>
+            <Header />
 
+            {stationElements}
+
+          </View>
+        </ScrollView>
+
+        <Tuner.Consumer>{_stream => (
+          <View style={styles.tuneOut}>
+            <Text style={styles.tuneOutText} onPress={() => { handleTuneOut(_stream) }}>tune out</Text>
+          </View>
+        )}
+        </Tuner.Consumer>
+
+      </Tuner.Provider>
     </SafeAreaView>
   );
 };
@@ -160,7 +193,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     padding: 6,
-    transform: [{translateX: 200}, {translateY:120}, {rotateZ: '-49deg'}]
+    transform: [{ translateX: 200 }, { translateY: 120 }, { rotateZ: '-49deg' }]
   },
   headerText: {
     color: isDarkMode ? 'ivory' : 'black',
@@ -183,6 +216,18 @@ const styles = StyleSheet.create({
     color: isDarkMode ? 'ivory' : 'black',
     fontSize: 12,
     fontStyle: 'italic'
+  },
+  tuneOut: {
+    textAlign: 'center',
+    fontSize: 24,
+    margin: 20,
+    padding: 20,
+    backgroundColor: isDarkMode ? 'ivory' : 'black',
+  },
+  tuneOutText: {
+    color: isDarkMode ? 'black' : 'ivory',
+    textAlign: 'center',
+    fontSize: 24,
   },
   highlight: {
     fontWeight: '700',
