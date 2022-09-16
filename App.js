@@ -31,6 +31,8 @@ const Station = ({ name, src }): Node => {
     }
   }
 
+  // the switch behavior should be always setting the source to something new (unload, then load)
+  // and there should be a button at the button to tune out
   async function tuneRadio(_stream) {
     const soundStatus = await _stream.getStatusAsync()
 
@@ -60,26 +62,13 @@ const Station = ({ name, src }): Node => {
         {stream => (
           <Text
           onPress={() => {handlePlay(stream)}}
-            style={[
-              styles.stationTitle,
-              {
-                fontFamily: 'Inter',
-                color: isDarkMode ? 'ivory' : 'black'
-              },
-            ]}>
+            style={[styles.stationTitle]}>
             {name}
           </Text>
         )}
       </Tuner.Consumer>
       <Text
-        style={[
-          styles.stationDescription,
-          {
-            color: isDarkMode ? 'ivory' : 'black',
-            fontSize: 12,
-            fontStyle: 'italic'
-          },
-        ]}>
+        style={[styles.stationDescription]}>
         {statusText}
       </Text>
     </View>
@@ -91,51 +80,68 @@ const Header = (): Node => {
   return (
     <View style={styles.headerContainer}>
       <Text
-        style={[
-          styles.headerText,
-          {
-            color: isDarkMode ? 'ivory' : 'black'
-          },
-        ]}>
+        style={[styles.headerText]}>
+        webradios
+      </Text>
+      <Text
+        style={[styles.headerText]}>
+        webradios
+      </Text>
+      <Text
+        style={[styles.headerText]}>
         webradios
       </Text>
     </View>
   );
 };
 
+const stations = [
+  {
+    name: "fip",
+    src: "http://icecast.radiofrance.fr/fip-hifi.aac"
+  },
+  {
+    name: "kapital",
+    src: "https://radiokapitalpl.out.airtime.pro/radiokapitalpl_a"
+  },
+  {
+    name: "mephisto",
+    src: "http://radiostream.radio.uni-leipzig.de:8000/mephisto976_livestream.mp3"
+  }
+]
+
+let isDarkMode = 'dark'
 const Tuner = createContext()
 const App: () => Node = () => {
 
-  const isDarkMode = useColorScheme() === 'dark';
+  isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? 'black' : 'ivory',
-    flex: 1,
-  };
+  const setupStream = async () => {
+    await Audio.setAudioModeAsync({
+      staysActiveInBackground: true
+    })
+  }
+
+  setupStream()
 
   const stream = new Audio.Sound()
 
+  let stationElements = []
+  for(let i = 0; i < stations.length; i++){
+    stationElements.push(<Station name={stations[i].name} src={stations[i].src}></Station>)
+  }
+
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView style={styles.backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
+        style={styles.backgroundStyle}>
         <View
-          style={{
-            backgroundColor: isDarkMode ? 'black' : 'ivory',
-          }}>
+          style={styles.foregroundStyle}>
           <Header />
           <Tuner.Provider value={stream}>
-            <Station name="france inter paris" src="http://icecast.radiofrance.fr/fip-hifi.aac">
-
-            </Station>
-            <Station name="kapital" src="https://radiokapitalpl.out.airtime.pro/radiokapitalpl_a">
-
-            </Station>
-            <Station name="mephisto" src="http://radiostream.radio.uni-leipzig.de:8000/mephisto976_livestream.mp3">
-
-            </Station>
+            {stationElements}
           </Tuner.Provider>
         </View>
       </ScrollView>
@@ -145,8 +151,20 @@ const App: () => Node = () => {
 };
 
 const styles = StyleSheet.create({
+  foregroundStyle: {
+    backgroundColor: isDarkMode ? 'black' : 'ivory',
+  },
+  backgroundStyle: {
+    backgroundColor: isDarkMode ? 'black' : 'ivory',
+    flex: 1,
+  },
   headerContainer: {
-    padding: 6
+    padding: 6,
+    transform: [{translateX: 200}, {translateY:120}, {rotateZ: '-49deg'}]
+  },
+  headerText: {
+    color: isDarkMode ? 'ivory' : 'black',
+    fontSize: 11,
   },
   stationContainer: {
     marginTop: 32,
@@ -155,11 +173,16 @@ const styles = StyleSheet.create({
   stationTitle: {
     fontSize: 24,
     fontWeight: '600',
+    fontFamily: 'Inter',
+    color: isDarkMode ? 'ivory' : 'black'
   },
   stationDescription: {
     marginTop: 8,
     fontSize: 18,
     fontWeight: '400',
+    color: isDarkMode ? 'ivory' : 'black',
+    fontSize: 12,
+    fontStyle: 'italic'
   },
   highlight: {
     fontWeight: '700',
