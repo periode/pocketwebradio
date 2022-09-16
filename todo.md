@@ -1,7 +1,7 @@
 # todo
 
 ## present
-- [ ] make sure only one audio stream is ever used
+- [x] make sure only one audio stream is ever used
 
 ## past
 

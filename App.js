@@ -7,7 +7,7 @@
 
 import React, { useState, useRef, createContext, useEffect } from 'react';
 import { Audio } from 'expo-av';
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer, {Capability} from 'react-native-track-player';
 import {
   SafeAreaView,
   ScrollView,
@@ -18,8 +18,7 @@ import {
   View,
 } from 'react-native';
 
-const Station = ({ name, src }) => {
-  const [statusText, setStatusText] = useState('idle')
+const Station = ({ name, src, id, updateLivestream, current }) => {
   const track = {
     url: src,
     title: name,
@@ -28,11 +27,7 @@ const Station = ({ name, src }) => {
 
   const handlePlay = () => {
     tuneIn()
-    if (statusText === 'idle') {
-      setStatusText('tuning in')
-    } else {
-      setStatusText('idle')
-    }
+    updateLivestream(id)
   }
 
   // the switch behavior should be always setting the source to something new (unload, then load)
@@ -50,14 +45,14 @@ const Station = ({ name, src }) => {
         {stream => (
           <Text
             onPress={() => { handlePlay(stream) }}
-            style={[styles.stationTitle]}>
+            style={[styles.stationTitle, current == id ? styles.streamPlaying : styles.streamIdle]}>
             {name}
           </Text>
         )}
       </Tuner.Consumer>
       <Text
         style={[styles.stationDescription]}>
-        {statusText}
+        {current == id ? 'tuned in' : 'idle'}
       </Text>
     </View>
   );
@@ -83,42 +78,81 @@ const Header = () => {
   );
 };
 
-const stations = [
-  {
-    name: "fip",
-    src: "http://icecast.radiofrance.fr/fip-hifi.aac"
-  },
-  {
-    name: "kapital",
-    src: "https://radiokapitalpl.out.airtime.pro/radiokapitalpl_a"
-  },
-  {
-    name: "mephisto",
-    src: "http://radiostream.radio.uni-leipzig.de:8000/mephisto976_livestream.mp3"
-  }
-]
-
 let isDarkMode = 'dark'
 const Tuner = createContext()
+const REMOTE_ENDPOINT = "https://static.enframed.net/stations.json"
 const App = () => {
+  const [log, setLog] = useState(String)
+  const [stationsList, setStationsList] = useState(Array)
+  const [currentLivestream, setCurrentLivestram] = useState(-1)
 
   useEffect(() => {
     async function setup() {
-      await TrackPlayer.setupPlayer({});
+      try {
+        // this method will only reject if player has not been setup yet
+        await TrackPlayer.getCurrentTrack()
+        console.log('already set up');
+      } catch {
+        console.log('setting up new...');
+        await TrackPlayer.setupPlayer();
+        await TrackPlayer.updateOptions({
+          stoppingAppPausesPlayback: true,
+          capabilities: [
+            Capability.Play,
+            Capability.Pause,
+            Capability.SkipToNext,
+            Capability.SkipToPrevious,
+            Capability.SeekTo,
+          ],
+          compactCapabilities: [
+            Capability.Play,
+            Capability.Pause,
+            Capability.SkipToNext,
+            Capability.SeekTo,
+          ],
+        });
+        setCurrentLivestram(-1)
+      } finally {
+        console.log('finished setup check');
+      }
     }
 
     setup()
-  })
+
+    fetch(REMOTE_ENDPOINT)
+    .then(res => {
+      if(res.ok) return res.json()
+      else setLog("Error fetching remote information")
+    })
+    .then(data => {
+      setLog(`fetched ${data.length} stations`)
+      setStationsList(data)
+    })
+    .catch(err => {
+      setLog(err)
+      console.log(`failed, loading the backup list`)
+      setStationsList(require('./stations.json'))
+    })
+    .finally(() => {
+      console.log('finished loading')
+    })
+  }, [])
 
   isDarkMode = useColorScheme() === 'dark';
 
   async function handleTuneOut() {
     await TrackPlayer.pause()
+    setCurrentLivestram(-1)
+  }
+
+  const updateLivestream = (_stream) => {
+    console.log(`updating ${_stream}`)
+    setCurrentLivestram(_stream)
   }
 
   let stationElements = []
-  for (let i = 0; i < stations.length; i++) {
-    stationElements.push(<Station name={stations[i].name} src={stations[i].src} key={stations[i].name}></Station>)
+  for (let i = 0; i < stationsList.length; i++) {
+    stationElements.push(<Station name={stationsList[i].name} src={stationsList[i].src} key={stationsList[i].name} id={i} updateLivestream={updateLivestream} current={currentLivestream}></Station>)
   }
 
   return (
@@ -164,13 +198,17 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
     fontFamily: 'Inter',
+  },
+  streamIdle: {
+    opacity: 0.7
+  },
+  streamPlaying: {
     color: isDarkMode ? 'ivory' : 'black'
   },
   stationDescription: {
     marginTop: 8,
     fontSize: 18,
     fontWeight: '400',
-    color: isDarkMode ? 'ivory' : 'black',
     fontSize: 12,
     fontStyle: 'italic'
   },

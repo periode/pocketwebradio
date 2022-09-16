@@ -1,0 +1,14 @@
+[
+    {
+        "name": "fip",
+        "src": "http://icecast.radiofrance.fr/fip-hifi.aac"
+    },
+    {
+        "name": "kapital",
+        "src": "https://radiokapitalpl.out.airtime.pro/radiokapitalpl_a"
+    },
+    {
+        "name": "mephisto",
+        "src": "http://radiostream.radio.uni-leipzig.de:8000/mephisto976_livestream.mp3"
+    }
+]
