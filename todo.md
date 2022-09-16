@@ -12,3 +12,4 @@
 - [ ] load all stations from remote resource
 - [ ] implement double-play button on bluetooth speaker as 'nextStation'
 - [ ] implement global tuning state
+    - [ ] fix the display of each station (e.g should switch back to idle when another one is played)

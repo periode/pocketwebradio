@@ -5,9 +5,9 @@
 //-- https://reactnative.dev/docs/navigation
 //-- https://reactnative.dev/docs/network
 
-import React, { useState, useRef, createContext } from 'react';
+import React, { useState, useRef, createContext, useEffect } from 'react';
 import { Audio } from 'expo-av';
-import type { Node } from 'react';
+import TrackPlayer from 'react-native-track-player';
 import {
   SafeAreaView,
   ScrollView,
@@ -18,12 +18,16 @@ import {
   View,
 } from 'react-native';
 
-const Station = ({ name, src }): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
+const Station = ({ name, src }) => {
   const [statusText, setStatusText] = useState('idle')
+  const track = {
+    url: src,
+    title: name,
+    artist: name
+  }
 
-  const handlePlay = (_stream) => {
-    tuneRadio(_stream)
+  const handlePlay = () => {
+    tuneIn()
     if (statusText === 'idle') {
       setStatusText('tuning in')
     } else {
@@ -33,36 +37,11 @@ const Station = ({ name, src }): Node => {
 
   // the switch behavior should be always setting the source to something new (unload, then load)
   // and there should be a button at the button to tune out
-  async function tuneRadio(_stream) {
-    const soundStatus = await _stream.getStatusAsync()
-
-    if (!soundStatus.isLoaded) {
-      console.log(`loading ${src}...`);
-      try {
-        //-- add properties to play audio when in bg and locked
-        await _stream.loadAsync({ uri: src }, { shouldPlay: true })
-        console.log('loaded!')
-      } catch (e) {
-        console.log(`missed! ${e}`);
-      }
-    } else {
-      console.log(`unloading first ${src}...`);
-      try {
-        await _stream.unloadAsync()
-        console.log(`unloaded!`);
-      } catch (e) {
-        console.log(`failed to unload! ${e}`);
-      }
-
-      console.log(`loading ${src}...`);
-      try {
-        //-- add properties to play audio when in bg and locked
-        await _stream.loadAsync({ uri: src }, { shouldPlay: true })
-        console.log('loaded!')
-      } catch (e) {
-        console.log(`missed! ${e}`);
-      }
-    }
+  async function tuneIn() {
+    console.log(`switching to ${track.url}`);
+    await TrackPlayer.reset()
+    await TrackPlayer.add(track)
+    await TrackPlayer.play()
   }
 
   return (
@@ -84,7 +63,7 @@ const Station = ({ name, src }): Node => {
   );
 };
 
-const Header = (): Node => {
+const Header = () => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.headerContainer}>
@@ -121,34 +100,21 @@ const stations = [
 
 let isDarkMode = 'dark'
 const Tuner = createContext()
-const App: () => Node = () => {
+const App = () => {
+
+  useEffect(() => {
+    async function setup() {
+      await TrackPlayer.setupPlayer({});
+    }
+
+    setup()
+  })
 
   isDarkMode = useColorScheme() === 'dark';
 
-  const setupStream = async () => {
-    await Audio.setAudioModeAsync({
-      staysActiveInBackground: true,
-      playThroughEarpieceAndroid: false
-    })
+  async function handleTuneOut() {
+    await TrackPlayer.pause()
   }
-
-  async function handleTuneOut(_stream) {
-    const soundStatus = await _stream.getStatusAsync()
-    console.log(`tuning out...`);
-
-    if (soundStatus.isLoaded) {
-      try {
-        await stream.unloadAsync()
-        console.log(`unloaded!`);
-      } catch (e) {
-        console.log(`failed to unload! ${e}`);
-      }
-    }
-  }
-
-  setupStream()
-
-  const stream = new Audio.Sound()
 
   let stationElements = []
   for (let i = 0; i < stations.length; i++) {
@@ -158,27 +124,18 @@ const App: () => Node = () => {
   return (
     <SafeAreaView style={styles.backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <Tuner.Provider value={stream}>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.backgroundStyle}>
-          <View
-            style={styles.foregroundStyle}>
-            <Header />
-
-            {stationElements}
-
-          </View>
-        </ScrollView>
-
-        <Tuner.Consumer>{_stream => (
-          <View style={styles.tuneOut}>
-            <Text style={styles.tuneOutText} onPress={() => { handleTuneOut(_stream) }}>tune out</Text>
-          </View>
-        )}
-        </Tuner.Consumer>
-
-      </Tuner.Provider>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={styles.backgroundStyle}>
+        <View
+          style={styles.foregroundStyle}>
+          <Header />
+          {stationElements}
+        </View>
+      </ScrollView>
+      <View style={styles.tuneOut}>
+        <Text style={styles.tuneOutText} onPress={() => { handleTuneOut() }}>tune out</Text>
+      </View>
     </SafeAreaView>
   );
 };
