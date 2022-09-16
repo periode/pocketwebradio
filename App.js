@@ -5,7 +5,7 @@
 //-- https://reactnative.dev/docs/navigation
 //-- https://reactnative.dev/docs/network
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, createContext } from 'react';
 import { Audio } from 'expo-av';
 import type { Node } from 'react';
 import {
@@ -21,11 +21,9 @@ import {
 const Station = ({ name, src }): Node => {
   const isDarkMode = useColorScheme() === 'dark';
   const [statusText, setStatusText] = useState('idle')
-  const [isLoaded, setLoaded] = useState(false)
-  const {sound} = useRef()
 
-  const handlePress = () => {
-    tuneRadio(src)
+  const handlePlay = (_stream) => {
+    tuneRadio(_stream)
     if (statusText === 'idle') {
       setStatusText('tuning in to ' + src)
     } else {
@@ -33,13 +31,14 @@ const Station = ({ name, src }): Node => {
     }
   }
 
-  async function tuneRadio() {
-    if (!isLoaded) {
+  async function tuneRadio(_stream) {
+    const soundStatus = await _stream.getStatusAsync()
+
+    if (!soundStatus.isLoaded) {
       console.log(`loading ${src}...`);
       try {
-        const { sound } = await Audio.Sound.createAsync({ uri: src }, { shouldPlay: true });
-        this.sound = sound
-        setLoaded(true)
+        //-- add properties to play audio when in bg and locked
+        await _stream.loadAsync({ uri: src }, { shouldPlay: true })
         console.log('loaded!')
       } catch (e) {
         console.log(`missed! ${e}`);
@@ -47,8 +46,7 @@ const Station = ({ name, src }): Node => {
     } else {
       console.log(`unloading ${src}...`);
       try {
-        await this.sound.unloadAsync()
-        setLoaded(false)
+        await _stream.unloadAsync()
         console.log(`unloaded!`);
       } catch (e) {
         console.log(`failed to unload! ${e}`);
@@ -58,17 +56,21 @@ const Station = ({ name, src }): Node => {
 
   return (
     <View style={styles.stationContainer}>
-      <Text
-        onPress={handlePress}
-        style={[
-          styles.stationTitle,
-          {
-            fontFamily: 'Inter',
-            color: isDarkMode ? 'ivory' : 'black'
-          },
-        ]}>
-        {name}
-      </Text>
+      <Tuner.Consumer>
+        {stream => (
+          <Text
+          onPress={() => {handlePlay(stream)}}
+            style={[
+              styles.stationTitle,
+              {
+                fontFamily: 'Inter',
+                color: isDarkMode ? 'ivory' : 'black'
+              },
+            ]}>
+            {name}
+          </Text>
+        )}
+      </Tuner.Consumer>
       <Text
         style={[
           styles.stationDescription,
@@ -101,6 +103,7 @@ const Header = (): Node => {
   );
 };
 
+const Tuner = createContext()
 const App: () => Node = () => {
 
   const isDarkMode = useColorScheme() === 'dark';
@@ -109,6 +112,8 @@ const App: () => Node = () => {
     backgroundColor: isDarkMode ? 'black' : 'ivory',
     flex: 1,
   };
+
+  const stream = new Audio.Sound()
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -121,15 +126,17 @@ const App: () => Node = () => {
             backgroundColor: isDarkMode ? 'black' : 'ivory',
           }}>
           <Header />
-          <Station name="france inter paris" src="http://icecast.radiofrance.fr/fip-hifi.aac">
+          <Tuner.Provider value={stream}>
+            <Station name="france inter paris" src="http://icecast.radiofrance.fr/fip-hifi.aac">
 
-          </Station>
-          <Station name="kapital" src="https://radiokapitalpl.out.airtime.pro/radiokapitalpl_a">
+            </Station>
+            <Station name="kapital" src="https://radiokapitalpl.out.airtime.pro/radiokapitalpl_a">
 
-          </Station>
-          <Station name="mephisto" src="http://radiostream.radio.uni-leipzig.de:8000/mephisto976_livestream.mp3">
+            </Station>
+            <Station name="mephisto" src="http://radiostream.radio.uni-leipzig.de:8000/mephisto976_livestream.mp3">
 
-          </Station>
+            </Station>
+          </Tuner.Provider>
         </View>
       </ScrollView>
 
