@@ -1,15 +1,20 @@
 # todo
 
 ## present
-- [x] make sure only one audio stream is ever used
+
+- [ ] animation on tuning button
+    - [ ] how to get the button to expand on radio playback?
+- [ ] fill content of json
 
 ## past
 
+- [x] make sure only one audio stream is ever used
+- [x] load all stations from remote resource
 - [x] setup react native dev environment
 - [x] get the audio to work
+- [x] implement global tuning state
+    - [x] fix the display of each station (e.g should switch back to idle when another one is played)
 
 ## future
-- [ ] load all stations from remote resource
+
 - [ ] implement double-play button on bluetooth speaker as 'nextStation'
-- [ ] implement global tuning state
-    - [ ] fix the display of each station (e.g should switch back to idle when another one is played)

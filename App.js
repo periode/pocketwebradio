@@ -1,14 +1,7 @@
-//-- ref
-//-- https://reactnative.dev/docs/style
-//-- https://reactnative.dev/docs/flexbox (layout) 
-//-- https://reactnative.dev/docs/components-and-apis
-//-- https://reactnative.dev/docs/navigation
-//-- https://reactnative.dev/docs/network
-
 import React, { useState, useRef, createContext, useEffect } from 'react';
-import { Audio } from 'expo-av';
 import TrackPlayer, {Capability} from 'react-native-track-player';
 import {
+  Animated,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -78,6 +71,43 @@ const Header = () => {
   );
 };
 
+const TuneButton = ({updateLivestream}) => {
+  const [status, setStatus] = useState("tune out")
+  const sizeAnim = useRef(new Animated.Value(1)).current
+
+  useEffect(() => {
+    Animated.timing(
+      sizeAnim,
+      {
+        toValue: 350,
+        duration: 1000,
+        useNativeDriver: false
+      }
+    ).start()
+  }, [sizeAnim])
+
+  async function handleTuneOut() {
+    await TrackPlayer.pause()
+    // Animated.timing(
+    //   sizeAnim,
+    //   {
+    //     toValue: 10,
+    //     duration: 1000,
+    //     useNativeDriver: false
+    //   }
+    // ).start()
+    updateLivestream(-1)
+  }
+
+  return(
+    <Animated.View style={[styles.tuneOut,{
+      width: sizeAnim
+    }]}>
+    <Text style={styles.tuneOutText} onPress={() => { handleTuneOut() }}>x</Text>
+  </Animated.View>
+  )
+}
+
 let isDarkMode = 'dark'
 const Tuner = createContext()
 const REMOTE_ENDPOINT = "https://static.enframed.net/stations.json"
@@ -140,11 +170,6 @@ const App = () => {
 
   isDarkMode = useColorScheme() === 'dark';
 
-  async function handleTuneOut() {
-    await TrackPlayer.pause()
-    setCurrentLivestram(-1)
-  }
-
   const updateLivestream = (_stream) => {
     console.log(`updating ${_stream}`)
     setCurrentLivestram(_stream)
@@ -167,9 +192,7 @@ const App = () => {
           {stationElements}
         </View>
       </ScrollView>
-      <View style={styles.tuneOut}>
-        <Text style={styles.tuneOutText} onPress={() => { handleTuneOut() }}>tune out</Text>
-      </View>
+    <TuneButton updateLivestream={updateLivestream}></TuneButton>
     </SafeAreaView>
   );
 };
