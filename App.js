@@ -33,7 +33,18 @@ const Station = ({ name, src, id, updateLivestream, current }) => {
   }
 
   return (
-    <View style={styles.stationContainer}>
+    <View style={[styles.stationContainer, {
+      display: 'flex',
+      flex: 1,
+      height: 200,
+      width: 200,
+      marginTop: 150,
+      marginBottom: 200,
+      borderRightColor:'ivory',
+      borderRightWidth: 2,
+
+      justifyContent: 'center'
+    }]}>
       <Tuner.Consumer>
         {stream => (
           <Text
@@ -72,15 +83,16 @@ const Header = () => {
 };
 
 const TuneButton = ({ updateLivestream, isPlaying }) => {
+  const maxWidth = 175
   const [status, setStatus] = useState("tune out")
-  const sizeAnim = useRef(new Animated.Value(10)).current
+  const sizeAnim = useRef(new Animated.Value(1)).current
   console.log(isPlaying);
 
   useEffect(() => {
     Animated.timing(
       sizeAnim,
       {
-        toValue: isPlaying ? 350 : 10,
+        toValue: isPlaying ? maxWidth : 1,
         duration: 500,
         useNativeDriver: false
       }
@@ -93,7 +105,7 @@ const TuneButton = ({ updateLivestream, isPlaying }) => {
     Animated.timing(
       sizeAnim,
       {
-        toValue: 10,
+        toValue: 1,
         duration: 500,
         useNativeDriver: false
       }
@@ -209,7 +221,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     padding: 6,
-    transform: [{ translateX: 200 }, { translateY: 120 }, { rotateZ: '-49deg' }]
+    transform: [{ translateX: 200 }, { translateY: -50 }, { rotateZ: '-49deg' }]
   },
   headerText: {
     color: isDarkMode ? 'ivory' : 'black',
@@ -225,7 +237,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
   },
   streamIdle: {
-    opacity: 0.7
+    opacity: 0.85
   },
   streamPlaying: {
     color: isDarkMode ? 'ivory' : 'black'
@@ -238,6 +250,10 @@ const styles = StyleSheet.create({
     fontStyle: 'italic'
   },
   tuneOut: {
+    position: 'absolute',
+    right: 0,
+    top: 300,
+    // opacity: 0.4,
     textAlign: 'center',
     fontSize: 24,
     margin: 20,

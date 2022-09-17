@@ -146,5 +146,9 @@
     {
         "name": "netil radio",
         "src": "https://netilradio.out.airtime.pro/netilradio_a"
+    },
+    {
+        "name":"deutschlandfunk kultur",
+        "src": "https://f131.rndfnk.com/ard/dlf/02/mp3/128/stream.mp3?aggregator=web&cid=01FBPXKD7AYM1NKT2H60NVGHEQ&sid=2EujdSyuhoOQQHy5taVivl8VWOx&token=DjAY6oROpmresKh46MEtilcG19n21npq535DnaBOnKw&tvf=7s1fyNXYFRdmMTMxLnJuZGZuay5jb20"
     }
 ]
