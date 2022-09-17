@@ -10,5 +10,141 @@
     {
         "name": "mephisto",
         "src": "http://radiostream.radio.uni-leipzig.de:8000/mephisto976_livestream.mp3"
+    },
+    {
+        "name": "operator",
+        "src": "https://edge-01.streamnerd.nl/operator/operator/chunks.m3u8"
+    },
+    {
+        "name": "loose antenna",
+        "src": "https://stream.looseantenna.fm:8000/default.mp3"
+    },
+    {
+        "name": "diaspora radio",
+        "src": "https://stream-52.zeno.fm/k7t5zz2ur1duv?zs=57LU6Pp1Ry6yX16I3DjzGA"
+    },
+    {
+        "name": "radio alhara",
+        "src": "http://n0a.radiojar.com/78cxy6wkxtzuv?1663415326=&rj-tok=AAABg0tShgEA8Hs72XfKLaymlw&rj-ttl=5"
+    },
+    {
+        "name": "20ft radio",
+        "src": "https://20ft.ippro.co/live/"
+    },
+    {
+        "name": "ariana fm",
+        "src": "https://streams.radio.co/sa3345aaa8/listen"
+    },
+    {
+        "name": "highlife radio",
+        "src": "https://securestreams6.autopo.st:2114/stream?type=http&nocache=25102"
+    },
+    {
+        "name": "hong kong community radio",
+        "src": "https://hkcr.live/audio/index.m3u8"
+    },
+    {
+        "name": "radio quântica",
+        "src": "https://stream.radioquantica.com:8443/stream"
+    },
+    {
+        "name": "stewart avenue",
+        "src": "https://streaming.radio.co/sc563c27e8/listen"
+    },
+    {
+        "name": "lyl radio",
+        "src": "https://icecast.lyl.live/live"
+    },
+    {
+        "name": "beshknow",
+        "src": "https://radio.beshknow.com/beshknow"
+    },
+    {
+        "name": "s.p.a.z.",
+        "src": "https://radio.spaz.org:8060/radio.ogg"
+    },
+    {
+        "name": "reboot.fm",
+        "src": "http://87.118.122.220:8002/stream?type=.mp3"
+    },
+    {
+        "name": "pi radio",
+        "src": "https://piradio.de/stream/"
+    },
+    {
+        "name": "pi node",
+        "src": "https://stream.p-node.org/pnode.mp3"
+    },
+    {
+        "name": "nts 1",
+        "src": "https://stream-relay-geo.ntslive.net/stream?client=NTSWebApp&t=1663415919654"
+    },
+    {
+        "name": "nts 2",
+        "src": "https://stream-relay-geo.ntslive.net/stream2?client=NTSWebApp&t=1663415919654"
+    },
+    {
+        "name": "dublab",
+        "src": "https://dublab.out.airtime.pro/dublab_a"
+    },
+    {
+        "name": "lahmacun",
+        "src": "https://streaming.lahmacun.hu/radio/8000/radio.mp3?1663415972"
+    },
+    {
+        "name": "radion berlin",
+        "src": "http://radioon.out.airtime.pro:8000/radioon_a"
+    },
+    {
+        "name": "refuge worldwide",
+        "src": "https://streaming.radio.co/s3699c5e49/listen"
+    },
+    {
+        "name": "radio nopal",
+        "src": "https://radio.mensajito.mx/nopalradio"
+    },
+    {
+        "name": "threads radio",
+        "src": "https://threads.out.airtime.pro/threads_b"
+    },
+    {
+        "name": "oroko radio",
+        "src": "https://s5.radio.co/s23b8ada46/listen"
+    },
+    {
+        "name": "anon radio",
+        "src": "https://anonradio.net:8443/anonradio"
+    },
+    {
+        "name": "internet public radio",
+        "src": "https://c11.radioboss.fm:18270/stream"
+    },
+    {
+        "name": "radio 8000",
+        "src": "https://radio80k.out.airtime.pro/radio80k_a"
+    },
+    {
+        "name": "kommunal radio",
+        "src": "https://rad.komrad.live:8000/radio.mp3?refresh=1663416590815"
+    },
+    {
+        "name": "radio piedras",
+        "src": "https://stream1.livescast.com:10064/stream"
+    },
+    {
+        "name": "hotel radio",
+        "src": "https://radio2.pro-fhi.net/listen-adnnewgo-stream.mp3"
+    },
+    {
+        "name": "cashmere radio",
+        "src": "https://cashmereradio.out.airtime.pro/cashmereradio_a"
+    },
+    {
+        "name": "radio art",
+        "src": "http://radioartzone.out.airtime.pro:8000/radioartzone_b"
+    },
+    {
+        "name": "netil radio",
+        "src": "https://netilradio.out.airtime.pro/netilradio_a"
     }
 ]

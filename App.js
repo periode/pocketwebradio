@@ -1,5 +1,5 @@
 import React, { useState, useRef, createContext, useEffect } from 'react';
-import TrackPlayer, {Capability} from 'react-native-track-player';
+import TrackPlayer, { Capability } from 'react-native-track-player';
 import {
   Animated,
   SafeAreaView,
@@ -71,40 +71,42 @@ const Header = () => {
   );
 };
 
-const TuneButton = ({updateLivestream}) => {
+const TuneButton = ({ updateLivestream, isPlaying }) => {
   const [status, setStatus] = useState("tune out")
-  const sizeAnim = useRef(new Animated.Value(1)).current
+  const sizeAnim = useRef(new Animated.Value(10)).current
+  console.log(isPlaying);
 
   useEffect(() => {
     Animated.timing(
       sizeAnim,
       {
-        toValue: 350,
-        duration: 1000,
+        toValue: isPlaying ? 350 : 10,
+        duration: 500,
         useNativeDriver: false
       }
     ).start()
-  }, [sizeAnim])
+    setStatus(isPlaying ? "tune out" : "")
+  }, [sizeAnim, isPlaying])
 
   async function handleTuneOut() {
     await TrackPlayer.pause()
-    // Animated.timing(
-    //   sizeAnim,
-    //   {
-    //     toValue: 10,
-    //     duration: 1000,
-    //     useNativeDriver: false
-    //   }
-    // ).start()
+    Animated.timing(
+      sizeAnim,
+      {
+        toValue: 10,
+        duration: 500,
+        useNativeDriver: false
+      }
+    ).start()
     updateLivestream(-1)
   }
 
-  return(
-    <Animated.View style={[styles.tuneOut,{
+  return (
+    <Animated.View style={[styles.tuneOut, {
       width: sizeAnim
     }]}>
-    <Text style={styles.tuneOutText} onPress={() => { handleTuneOut() }}>x</Text>
-  </Animated.View>
+      <Text style={styles.tuneOutText} onPress={() => { handleTuneOut() }}>{status}</Text>
+    </Animated.View>
   )
 }
 
@@ -114,7 +116,7 @@ const REMOTE_ENDPOINT = "https://static.enframed.net/stations.json"
 const App = () => {
   const [log, setLog] = useState(String)
   const [stationsList, setStationsList] = useState(Array)
-  const [currentLivestream, setCurrentLivestram] = useState(-1)
+  const [currentLivestream, setCurrentLivestream] = useState(-1)
 
   useEffect(() => {
     async function setup() {
@@ -141,7 +143,7 @@ const App = () => {
             Capability.SeekTo,
           ],
         });
-        setCurrentLivestram(-1)
+        setCurrentLivestream(-1)
       } finally {
         console.log('finished setup check');
       }
@@ -150,29 +152,29 @@ const App = () => {
     setup()
 
     fetch(REMOTE_ENDPOINT)
-    .then(res => {
-      if(res.ok) return res.json()
-      else setLog("Error fetching remote information")
-    })
-    .then(data => {
-      setLog(`fetched ${data.length} stations`)
-      setStationsList(data)
-    })
-    .catch(err => {
-      setLog(err)
-      console.log(`failed, loading the backup list`)
-      setStationsList(require('./stations.json'))
-    })
-    .finally(() => {
-      console.log('finished loading')
-    })
+      .then(res => {
+        if (res.ok) return res.json()
+        else setLog("Error fetching remote information")
+      })
+      .then(data => {
+        setLog(`fetched ${data.length} stations`)
+        setStationsList(data)
+      })
+      .catch(err => {
+        setLog(err)
+        console.log(`failed, loading the backup list`)
+        setStationsList(require('./stations.json'))
+      })
+      .finally(() => {
+        console.log('finished loading')
+      })
   }, [])
 
   isDarkMode = useColorScheme() === 'dark';
 
   const updateLivestream = (_stream) => {
     console.log(`updating ${_stream}`)
-    setCurrentLivestram(_stream)
+    setCurrentLivestream(_stream)
   }
 
   let stationElements = []
@@ -192,7 +194,7 @@ const App = () => {
           {stationElements}
         </View>
       </ScrollView>
-    <TuneButton updateLivestream={updateLivestream}></TuneButton>
+      <TuneButton updateLivestream={updateLivestream} isPlaying={currentLivestream !== -1}></TuneButton>
     </SafeAreaView>
   );
 };
@@ -240,10 +242,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     margin: 20,
     padding: 20,
-    backgroundColor: isDarkMode ? 'ivory' : 'black',
+    height: 80,
+    borderColor: isDarkMode ? 'ivory' : 'black',
+    borderWidth: 2,
+    backgroundColor: 'black',
   },
   tuneOutText: {
-    color: isDarkMode ? 'black' : 'ivory',
+    color: isDarkMode ? 'ivory' : 'black',
     textAlign: 'center',
     fontSize: 24,
   },
