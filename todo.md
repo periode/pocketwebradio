@@ -4,7 +4,9 @@
 
 - [ ] add radio icon
 - [ ] add randomizing of stations
-- [ ] scroll interface
+- [x] scroll interface
+- [ ] make tune font smaller/centered
+- [ ] make sure you never connect if the tuner is not set
 
 ## past
 

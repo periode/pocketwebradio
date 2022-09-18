@@ -1,135 +1,23 @@
-import React, { useState, useRef, createContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TrackPlayer, { Capability } from 'react-native-track-player';
 import {
-  Animated,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
 } from 'react-native';
 
-const Station = ({ name, src, id, updateLivestream, current, tunerOffset }) => {
-  const [self, setSelf] = useState(null)
-  const track = {
-    id: id,
-    url: src,
-    title: name,
-    artist: name
-  }
+import Station from './components/Station';
+import Tuner from './components/Tuner';
+import Header from './components/Header'
 
-  useEffect(() => {
-    if(!self) return
-    
-    if(tunerOffset > self && tunerOffset < self + 120){
-      handlePlay()
-    }
-  }, [tunerOffset])
 
-  const handlePlay = () => {
-    tuneIn()
-  }
-
-  const handleLayout = (event) => {
-    setSelf(event.nativeEvent.layout.y)
-  }
-
-  async function tuneIn() {
-    console.log(`switching to ${track.url}`);
-    const current = await TrackPlayer.getQueue()
-    if(current[0].id == track.id) return
-
-    updateLivestream(id)
-    await TrackPlayer.reset()
-    await TrackPlayer.add(track)
-    await TrackPlayer.play()
-  }
-
-  return (
-    <View style={styles.stationContainer}
-    onLayout={handleLayout}>
-      
-      <Tuner.Consumer>
-        {stream => (
-          <Text
-            onPress={() => { handlePlay(stream) }}
-            style={[styles.stationTitle, current == id ? styles.streamPlaying : styles.streamIdle]}>
-            {name}
-          </Text>
-        )}
-      </Tuner.Consumer>
-      <Text
-        style={[styles.stationDescription]}>
-        {current == id ? 'tuned in' : 'idle'}
-      </Text>
-    </View>
-  );
-};
-
-const Header = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.headerContainer}>
-      <Text
-        style={[styles.headerText]}>
-        webradios
-      </Text>
-      <Text
-        style={[styles.headerText]}>
-        webradios
-      </Text>
-      <Text
-        style={[styles.headerText]}>
-        webradios
-      </Text>
-    </View>
-  );
-};
-
-const TuneButton = ({ updateLivestream, isPlaying }) => {
-  const maxWidth = 175
-  const [status, setStatus] = useState("tune out")
-  const sizeAnim = useRef(new Animated.Value(1)).current
-
-  useEffect(() => {
-    Animated.timing(
-      sizeAnim,
-      {
-        toValue: isPlaying ? maxWidth : 1,
-        duration: 500,
-        useNativeDriver: false
-      }
-    ).start()
-    setStatus(isPlaying ? "tune out" : "")
-  }, [sizeAnim, isPlaying])
-
-  async function handleTuneOut() {
-    await TrackPlayer.pause()
-    Animated.timing(
-      sizeAnim,
-      {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: false
-      }
-    ).start()
-    updateLivestream(-1)
-  }
-
-  return (
-    <Animated.View style={[styles.tuneOut, {
-      width: sizeAnim
-    }]}>
-      <Text style={styles.tuneOutText} onPress={() => { handleTuneOut() }}>{status}</Text>
-    </Animated.View>
-  )
-}
 
 let isDarkMode = 'dark'
-const Tuner = createContext()
 const REMOTE_ENDPOINT = "https://static.enframed.net/stations.json"
+
 const App = () => {
   const [log, setLog] = useState(String)
   const [stationsList, setStationsList] = useState(Array)
@@ -217,7 +105,7 @@ const App = () => {
           {stationElements}
         </View>
       </ScrollView>
-      <TuneButton updateLivestream={updateLivestream} isPlaying={currentLivestream !== -1}></TuneButton>
+      <Tuner updateLivestream={updateLivestream} isPlaying={currentLivestream !== -1}></Tuner>
     </SafeAreaView>
   );
 };
@@ -229,45 +117,6 @@ const styles = StyleSheet.create({
   backgroundStyle: {
     backgroundColor: isDarkMode ? 'black' : 'ivory',
     flex: 1,
-  },
-  headerContainer: {
-    padding: 6,
-    transform: [{ translateX: 200 }, { translateY: -50 }, { rotateZ: '-49deg' }]
-  },
-  headerText: {
-    color: isDarkMode ? 'ivory' : 'black',
-    fontSize: 11,
-  },
-  stationContainer: {
-    display: 'flex',
-    flex: 1,
-    height: 200,
-    width: 200,
-    marginTop: 150,
-    marginBottom: 200,
-    borderRightColor:'ivory',
-    borderRightWidth: 2,
-
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  stationTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    fontFamily: 'Inter',
-  },
-  streamIdle: {
-    opacity: 0.85
-  },
-  streamPlaying: {
-    color: isDarkMode ? 'ivory' : 'black'
-  },
-  stationDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    fontSize: 12,
-    fontStyle: 'italic'
   },
   tuneOut: {
     position: 'absolute',
