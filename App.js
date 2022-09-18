@@ -11,40 +11,46 @@ import {
   View,
 } from 'react-native';
 
-const Station = ({ name, src, id, updateLivestream, current }) => {
+const Station = ({ name, src, id, updateLivestream, current, tunerOffset }) => {
+  const [self, setSelf] = useState(null)
   const track = {
+    id: id,
     url: src,
     title: name,
     artist: name
   }
 
+  useEffect(() => {
+    if(!self) return
+    
+    if(tunerOffset > self && tunerOffset < self + 120){
+      handlePlay()
+    }
+  }, [tunerOffset])
+
   const handlePlay = () => {
     tuneIn()
-    updateLivestream(id)
   }
 
-  // the switch behavior should be always setting the source to something new (unload, then load)
-  // and there should be a button at the button to tune out
+  const handleLayout = (event) => {
+    setSelf(event.nativeEvent.layout.y)
+  }
+
   async function tuneIn() {
     console.log(`switching to ${track.url}`);
+    const current = await TrackPlayer.getQueue()
+    if(current[0].id == track.id) return
+
+    updateLivestream(id)
     await TrackPlayer.reset()
     await TrackPlayer.add(track)
     await TrackPlayer.play()
   }
 
   return (
-    <View style={[styles.stationContainer, {
-      display: 'flex',
-      flex: 1,
-      height: 200,
-      width: 200,
-      marginTop: 150,
-      marginBottom: 200,
-      borderRightColor:'ivory',
-      borderRightWidth: 2,
-
-      justifyContent: 'center'
-    }]}>
+    <View style={styles.stationContainer}
+    onLayout={handleLayout}>
+      
       <Tuner.Consumer>
         {stream => (
           <Text
@@ -86,7 +92,6 @@ const TuneButton = ({ updateLivestream, isPlaying }) => {
   const maxWidth = 175
   const [status, setStatus] = useState("tune out")
   const sizeAnim = useRef(new Animated.Value(1)).current
-  console.log(isPlaying);
 
   useEffect(() => {
     Animated.timing(
@@ -129,40 +134,44 @@ const App = () => {
   const [log, setLog] = useState(String)
   const [stationsList, setStationsList] = useState(Array)
   const [currentLivestream, setCurrentLivestream] = useState(-1)
+  const [offset, setOffset] = useState(0)
+
+  isDarkMode = useColorScheme() === 'dark';
 
   useEffect(() => {
-    async function setup() {
-      try {
-        // this method will only reject if player has not been setup yet
-        await TrackPlayer.getCurrentTrack()
-        console.log('already set up');
-      } catch {
-        console.log('setting up new...');
-        await TrackPlayer.setupPlayer();
-        await TrackPlayer.updateOptions({
-          stoppingAppPausesPlayback: true,
-          capabilities: [
-            Capability.Play,
-            Capability.Pause,
-            Capability.SkipToNext,
-            Capability.SkipToPrevious,
-            Capability.SeekTo,
-          ],
-          compactCapabilities: [
-            Capability.Play,
-            Capability.Pause,
-            Capability.SkipToNext,
-            Capability.SeekTo,
-          ],
-        });
-        setCurrentLivestream(-1)
-      } finally {
-        console.log('finished setup check');
-      }
-    }
-
     setup()
+    fetchStations()
+  }, [])
 
+  async function setup() {
+    try {
+      // this method will only reject if player has not been setup yet
+      await TrackPlayer.getCurrentTrack()
+      console.log('already set up');
+    } catch {
+      console.log('setting up new...');
+      await TrackPlayer.setupPlayer();
+      await TrackPlayer.updateOptions({
+        stoppingAppPausesPlayback: true,
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious
+        ],
+        compactCapabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext
+        ],
+      });
+      setCurrentLivestream(-1)
+    } finally {
+      console.log('finished setup check');
+    }
+  }
+
+  const fetchStations = () => {
     fetch(REMOTE_ENDPOINT)
       .then(res => {
         if (res.ok) return res.json()
@@ -180,9 +189,11 @@ const App = () => {
       .finally(() => {
         console.log('finished loading')
       })
-  }, [])
+  }
 
-  isDarkMode = useColorScheme() === 'dark';
+  const handleScroll = (event) => {
+    setOffset(event.nativeEvent.contentOffset.y + 300)
+  }
 
   const updateLivestream = (_stream) => {
     console.log(`updating ${_stream}`)
@@ -191,7 +202,7 @@ const App = () => {
 
   let stationElements = []
   for (let i = 0; i < stationsList.length; i++) {
-    stationElements.push(<Station name={stationsList[i].name} src={stationsList[i].src} key={stationsList[i].name} id={i} updateLivestream={updateLivestream} current={currentLivestream}></Station>)
+    stationElements.push(<Station name={stationsList[i].name} src={stationsList[i].src} key={stationsList[i].name} id={i} updateLivestream={updateLivestream} current={currentLivestream} tunerOffset={offset}></Station>)
   }
 
   return (
@@ -199,7 +210,7 @@ const App = () => {
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={styles.backgroundStyle}>
+        style={styles.backgroundStyle} onScroll={handleScroll}>
         <View
           style={styles.foregroundStyle}>
           <Header />
@@ -228,7 +239,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   stationContainer: {
-    marginTop: 32,
+    display: 'flex',
+    flex: 1,
+    height: 200,
+    width: 200,
+    marginTop: 150,
+    marginBottom: 200,
+    borderRightColor:'ivory',
+    borderRightWidth: 2,
+
+    justifyContent: 'center',
     paddingHorizontal: 24,
   },
   stationTitle: {
@@ -253,7 +273,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 300,
-    // opacity: 0.4,
     textAlign: 'center',
     fontSize: 24,
     margin: 20,
