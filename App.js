@@ -84,7 +84,6 @@ const App = () => {
   }
 
   const updateLivestream = (_stream) => {
-    console.log(`updating ${_stream}`)
     setCurrentLivestream(_stream)
   }
 
