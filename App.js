@@ -45,12 +45,13 @@ const App = () => {
           Capability.Play,
           Capability.Pause,
           Capability.SkipToNext,
-          Capability.SkipToPrevious
+          Capability.RemoteSkipToNext
         ],
         compactCapabilities: [
           Capability.Play,
           Capability.Pause,
-          Capability.SkipToNext
+          Capability.SkipToNext,
+          Capability.RemoteSkipToNext
         ],
       });
       setCurrentLivestream(-1)
@@ -89,7 +90,7 @@ const App = () => {
 
   let stationElements = []
   for (let i = 0; i < stationsList.length; i++) {
-    stationElements.push(<Station name={stationsList[i].name} src={stationsList[i].src} key={stationsList[i].name} id={i} updateLivestream={updateLivestream} current={currentLivestream} tunerOffset={offset}></Station>)
+    stationElements.push(<Station name={stationsList[i].name} url={stationsList[i].url} key={stationsList[i].name} id={i} updateLivestream={updateLivestream} current={currentLivestream} tunerOffset={offset}></Station>)
   }
 
   return (
