@@ -46,12 +46,12 @@ const styles = StyleSheet.create({
 });
 
 let isDarkMode = 'dark'
-function Station({ name, src, id, updateLivestream, current, tunerOffset }) {
+function Station({ name, url, id, updateLivestream, current, tunerOffset }) {
     isDarkMode = useColorScheme() === 'dark';
     const [self, setSelf] = useState(null)
     const track = {
         id: id,
-        url: src,
+        url: url,
         title: name,
         artist: name
     }
