@@ -1,4 +1,10 @@
 {
   "name": "webradios",
-  "displayName": "webradios"
+  "displayName": "webradios",
+  "svgAppIcon": {
+    "foregroundPath": "./icon.svg",
+    "platforms": ["android"],
+    "force": false,
+    "androidOutputPath": "./android/app/src/main/res"
+  }
 }

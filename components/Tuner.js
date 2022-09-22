@@ -67,6 +67,7 @@ const Tuner = ({ updateLivestream, isPlaying }) => {
                 useNativeDriver: false
             }
         ).start()
+        await TrackPlayer.reset()
         updateLivestream(-1)
     }
 

@@ -44,14 +44,20 @@ const App = () => {
         capabilities: [
           Capability.Play,
           Capability.Pause,
+          Capability.Skip,
           Capability.SkipToNext,
           Capability.RemoteSkipToNext
         ],
         compactCapabilities: [
           Capability.Play,
           Capability.Pause,
+          Capability.Skip,
+          Capability.SkipToNext
+        ],
+        notificationCapabilities: [
+          Capability.Play,
+          Capability.Pause,
           Capability.SkipToNext,
-          Capability.RemoteSkipToNext
         ],
       });
       setCurrentLivestream(-1)
