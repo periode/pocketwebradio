@@ -45,6 +45,8 @@ const styles = StyleSheet.create({
     },
 });
 
+const stations = require('../stations.json')
+
 let isDarkMode = 'dark'
 function Station({ name, url, id, updateLivestream, current, tunerOffset }) {
     isDarkMode = useColorScheme() === 'dark';
@@ -73,13 +75,24 @@ function Station({ name, url, id, updateLivestream, current, tunerOffset }) {
     }
 
     async function tuneIn() {
-        const current = await TrackPlayer.getQueue()
-        if (current.length > 0 && current[0].id == track.id) return
+        const r = Math.floor(Math.random() * stations.length -1)
+        const shadow = {
+            id: id,
+            url: stations[r].url,
+            title: stations[r].name,
+            artist: stations[r].name,
+        }
 
-        console.log(`switching to ${track.url}`);
+        // rather get state: if it's buffering, don't load the new track
+        const current = await TrackPlayer.getQueue()
+        if (current.length > 0 && (current[0].id == track.id || current[0].url == track.url)) return
+
+        console.log(`switching to ${track.title} -> ${stations[r].name}`);
         updateLivestream(id)
         await TrackPlayer.reset()
+        await TrackPlayer.add(shadow)
         await TrackPlayer.add(track)
+        
         await TrackPlayer.play()
     }
 

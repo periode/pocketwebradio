@@ -54,6 +54,11 @@ const App = () => {
           Capability.Skip,
           Capability.SkipToNext
         ],
+        notificationCapabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+        ],
       });
       setCurrentLivestream(-1)
     } finally {
