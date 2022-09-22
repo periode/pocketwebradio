@@ -75,6 +75,7 @@ function Station({ name, url, id, updateLivestream, current, tunerOffset }) {
     }
 
     async function tuneIn() {
+        // shuffle stations here
         const r = Math.floor(Math.random() * stations.length -1)
         const shadow = {
             id: id,
@@ -90,9 +91,8 @@ function Station({ name, url, id, updateLivestream, current, tunerOffset }) {
         console.log(`switching to ${track.title} -> ${stations[r].name}`);
         updateLivestream(id)
         await TrackPlayer.reset()
-        await TrackPlayer.add(shadow)
-        await TrackPlayer.add(track)
-        
+        await TrackPlayer.add(track, 0)
+        await TrackPlayer.add(shadow, 1)
         await TrackPlayer.play()
     }
 
