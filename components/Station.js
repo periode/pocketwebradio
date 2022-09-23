@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer, { State } from 'react-native-track-player';
 import {
     StyleSheet,
     Text,
@@ -45,54 +45,52 @@ const styles = StyleSheet.create({
     },
 });
 
-const stations = require('../stations.json')
+const stations = [...require('../stations.json')]
 
 let isDarkMode = 'dark'
-function Station({ name, url, id, updateLivestream, current, tunerOffset }) {
+function Station({ station, id, updateLivestream, current, tunerOffset }) {
     isDarkMode = useColorScheme() === 'dark';
     const [self, setSelf] = useState(null)
-    const track = {
-        id: id,
-        url: url,
-        title: name,
-        artist: name
-    }
 
     useEffect(() => {
         if (!self) return
 
-        if (tunerOffset > self && tunerOffset < self + 120) {
-            handlePlay()
-        }
+        if (tunerOffset > self - 50 && tunerOffset < self + 140)
+            tuneIn()
+
     }, [tunerOffset])
 
-    const handlePlay = () => {
-        tuneIn()
+    const shuffle = (array) => {
+        let currentIndex = array.length, randomIndex;
+
+        while (currentIndex != 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+        }
+
+        return array;
     }
+
 
     const handleLayout = (event) => {
         setSelf(event.nativeEvent.layout.y)
     }
 
     async function tuneIn() {
-        // shuffle stations here
-        const r = Math.floor(Math.random() * stations.length -1)
-        const shadow = {
-            id: id,
-            url: stations[r].url,
-            title: stations[r].name,
-            artist: stations[r].name,
-        }
+        const shadow = shuffle(stations)
 
-        // rather get state: if it's buffering, don't load the new track
-        const current = await TrackPlayer.getQueue()
-        if (current.length > 0 && (current[0].id == track.id || current[0].url == track.url)) return
+        const q = await TrackPlayer.getQueue()
+        const state = await TrackPlayer.getState()
+        if ((state === State.Playing && q[0].url === station.url) || state === State.Buffering) return
 
-        console.log(`switching to ${track.title} -> ${stations[r].name}`);
+        // console.log(`switching to ${station.title} -> ${stations[0].title}`);
         updateLivestream(id)
         await TrackPlayer.reset()
-        await TrackPlayer.add(track, 0)
-        await TrackPlayer.add(shadow, 1)
+        await TrackPlayer.add(shadow)
+        await TrackPlayer.add(station, 0)
         await TrackPlayer.play()
     }
 
@@ -100,9 +98,9 @@ function Station({ name, url, id, updateLivestream, current, tunerOffset }) {
         <View style={styles.stationContainer}
             onLayout={handleLayout}>
             <Text
-                onPress={() => { handlePlay }}
+                onPress={() => { tuneIn }}
                 style={[styles.stationTitle, current == id ? styles.streamPlaying : styles.streamIdle]}>
-                {name}
+                {station.title}
             </Text>
             <Text
                 style={[styles.stationDescription]}>

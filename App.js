@@ -21,14 +21,33 @@ const REMOTE_ENDPOINT = "https://static.enframed.net/stations.json"
 const App = () => {
   const [log, setLog] = useState(String)
   const [stationsList, setStationsList] = useState(Array)
-  const [currentLivestream, setCurrentLivestream] = useState(-1)
+  const [currentLivestream, setCurrentLivestream] = useState(null)
   const [offset, setOffset] = useState(0)
 
   isDarkMode = useColorScheme() === 'dark';
 
+  const shuffle = (array) => {
+    let currentIndex = array.length, randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
+  }
+
   useEffect(() => {
     setup()
-    fetchStations()
+    setStationsList(shuffle(require('./stations.json')))
+    // fetchStations()
   }, [])
 
   async function setup() {
@@ -46,7 +65,6 @@ const App = () => {
           Capability.Pause,
           Capability.Skip,
           Capability.SkipToNext,
-          Capability.RemoteSkipToNext
         ],
         compactCapabilities: [
           Capability.Play,
@@ -69,17 +87,21 @@ const App = () => {
   const fetchStations = () => {
     fetch(REMOTE_ENDPOINT)
       .then(res => {
-        if (res.ok) return res.json()
-        else setLog("Error fetching remote information")
+        if (res.ok) {
+          return res.json()
+        }
+        else { 
+          setStationsList(shuffle(require('./stations.json')))
+        }
       })
       .then(data => {
-        setLog(`fetched ${data.length} stations`)
-        setStationsList(data)
+        console.log(`fetched ${data.length} stations`)
+        setStationsList(shuffle(data))
       })
       .catch(err => {
         setLog(err)
         console.log(`failed, loading the backup list`)
-        setStationsList(require('./stations.json'))
+        setStationsList(shuffle(require('./stations.json')))
       })
       .finally(() => {
         console.log('finished loading')
@@ -96,7 +118,7 @@ const App = () => {
 
   let stationElements = []
   for (let i = 0; i < stationsList.length; i++) {
-    stationElements.push(<Station name={stationsList[i].name} url={stationsList[i].url} key={stationsList[i].name} id={i} updateLivestream={updateLivestream} current={currentLivestream} tunerOffset={offset}></Station>)
+    stationElements.push(<Station station={stationsList[i]} key={i} id={i} updateLivestream={updateLivestream} current={currentLivestream} tunerOffset={offset}></Station>)
   }
 
   return (

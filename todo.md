@@ -2,14 +2,16 @@
 
 ## present
 
-- [ ] add radio icon
-- [ ] add randomizing of stations
-- [x] scroll interface
-- [ ] make tune font smaller/centered
 - [ ] make sure you never connect if the tuner is not set
+- [ ] disconnect when you move away from station
 
 ## past
 
+- [x] get state of track player to see if it's buffering: if yes, don't load (not sure, how to deal with pending loads?)
+- [x] add radio icon
+- [x] add randomizing of stations
+- [x] scroll interface
+- [x] make tune font smaller/centered
 - [x] make sure only one audio stream is ever used
 - [x] load all stations from remote resource
 - [x] setup react native dev environment
