@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
       flex: 1,
     },
     headerContainer: {
+      height: 300,
       padding: 6,
       transform: [{ translateX: 200 }, { translateY: -50 }, { rotateZ: '-49deg' }]
     },

@@ -22,8 +22,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 24,
         margin: 20,
-        padding: 10,
-        height: 55,
+        height: 75,
         borderColor: isDarkMode ? 'black' : 'ivory',
         borderWidth: 2,
         backgroundColor: isDarkMode ? 'ivory' : 'black',
@@ -38,37 +37,37 @@ const styles = StyleSheet.create({
     },
 });
 
-const tuneOutText = "//"
+const tuneOutText = ">"
+const tuneInText = "<"
 let isDarkMode = 'dark'
 const Tuner = ({ updateLivestream, isPlaying }) => {
     isDarkMode = useColorScheme() === 'dark';
     const maxWidth = 175
+    const minWidth = 100
     const [status, setStatus] = useState(tuneOutText)
-    const sizeAnim = useRef(new Animated.Value(1)).current
+    const [isTunedIn, setTunedIn] = useState(false)
+    const sizeAnim = useRef(new Animated.Value(minWidth)).current
 
+    //todo check if isTunedIn before playing station
     useEffect(() => {
         Animated.timing(
             sizeAnim,
             {
-                toValue: isPlaying ? maxWidth : 1,
+                toValue: isTunedIn ? maxWidth : minWidth,
                 duration: 500,
                 useNativeDriver: false
             }
         ).start()
-        setStatus(isPlaying ? tuneOutText : "")
-    }, [sizeAnim, isPlaying])
+        setStatus(isTunedIn ? tuneOutText : tuneInText)
+        updateLivestream(isTunedIn ? 0 : -1)
+    }, [sizeAnim, isTunedIn])
 
-    async function handleTuneOut() {
-        await TrackPlayer.pause()
-        Animated.timing(
-            sizeAnim,
-            {
-                toValue: 1,
-                duration: 500,
-                useNativeDriver: false
-            }
-        ).start()
-        await TrackPlayer.reset()
+    async function handleTuningIn() {
+        if(isTunedIn){
+            await TrackPlayer.pause()
+            await TrackPlayer.reset()
+        }
+        setTunedIn(!isTunedIn)
         updateLivestream(-1)
     }
 
@@ -76,7 +75,7 @@ const Tuner = ({ updateLivestream, isPlaying }) => {
         <Animated.View style={[styles.tuneOut, {
             width: sizeAnim
         }]}>
-            <Text style={styles.tuneOutText} onPress={() => { handleTuneOut() }}>{status}</Text>
+            <Text style={styles.tuneOutText} onPress={() => { handleTuningIn() }}>{status}</Text>
         </Animated.View>
     )
 }

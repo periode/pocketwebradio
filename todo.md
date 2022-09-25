@@ -2,7 +2,8 @@
 
 ## present
 
-- [ ] make sure you never connect if the tuner is not set
+- [x] make sure you never connect if the tuner is not set
+- [ ] make tune input area larger
 - [ ] disconnect when you move away from station
 
 ## past

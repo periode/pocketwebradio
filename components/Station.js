@@ -55,10 +55,10 @@ function Station({ station, id, updateLivestream, current, tunerOffset }) {
     useEffect(() => {
         if (!self) return
 
-        if (tunerOffset > self - 50 && tunerOffset < self + 140)
+        if (tunerOffset > self - 50 && tunerOffset < self + 140 && current != -1)
             tuneIn()
 
-    }, [tunerOffset])
+    }, [tunerOffset, current])
 
     const shuffle = (array) => {
         let currentIndex = array.length, randomIndex;

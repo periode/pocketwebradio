@@ -118,7 +118,7 @@ const App = () => {
 
   let stationElements = []
   for (let i = 0; i < stationsList.length; i++) {
-    stationElements.push(<Station station={stationsList[i]} key={i} id={i} updateLivestream={updateLivestream} current={currentLivestream} tunerOffset={offset}></Station>)
+    stationElements.push(<Station station={stationsList[i]} key={i+1} id={i+1} updateLivestream={updateLivestream} current={currentLivestream} tunerOffset={offset}></Station>)
   }
 
   return (
