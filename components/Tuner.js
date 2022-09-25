@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 const tuneOutText = ">"
 const tuneInText = "<"
 let isDarkMode = 'dark'
-const Tuner = ({ updateLivestream }) => {
+const Tuner = ({ updateLivestream, current }) => {
     isDarkMode = useColorScheme() === 'dark';
     const maxWidth = 175
     const minWidth = 100
@@ -51,6 +51,19 @@ const Tuner = ({ updateLivestream }) => {
     const sizeAnim = useRef(new Animated.Value(minWidth)).current
 
     useEffect(() => {
+        if(current === -1)
+            setTunedIn(false)
+    }, [current])
+
+    useEffect(() => {
+        if(isTunedIn){
+            async function stop() {
+                await TrackPlayer.pause()
+                await TrackPlayer.reset()
+            }
+            stop()            
+        }
+
         Animated.timing(
             sizeAnim,
             {
@@ -63,13 +76,8 @@ const Tuner = ({ updateLivestream }) => {
         updateLivestream(isTunedIn ? 0 : -1)
     }, [sizeAnim, isTunedIn])
 
-    async function handleTuningIn() {
-        if(isTunedIn){
-            await TrackPlayer.pause()
-            await TrackPlayer.reset()
-        }
+    function handleTuningIn() {
         setTunedIn(!isTunedIn)
-        updateLivestream(-1)
     }
 
     return (

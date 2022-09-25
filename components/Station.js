@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import TrackPlayer, { State } from 'react-native-track-player';
+import TrackPlayer from 'react-native-track-player';
 import {
     StyleSheet,
     Text,
@@ -46,19 +46,16 @@ const styles = StyleSheet.create({
 });
 
 const stations = [...require('../stations.json')]
-
 let isDarkMode = 'dark'
-function Station({ station, id, updateLivestream, current, tunerOffset }) {
+
+function Station({ station, id, current, updateOffset }) {
     isDarkMode = useColorScheme() === 'dark';
-    const [self, setSelf] = useState(null)
 
     useEffect(() => {
-        if (!self) return
-
-        if (tunerOffset > self - 50 && tunerOffset < self + 140 && current != -1)
+        if(current === id)
             tuneIn()
 
-    }, [tunerOffset, current])
+    }, [current])
 
     const shuffle = (array) => {
         let currentIndex = array.length, randomIndex;
@@ -74,24 +71,20 @@ function Station({ station, id, updateLivestream, current, tunerOffset }) {
         return array;
     }
 
-
     const handleLayout = (event) => {
-        setSelf(event.nativeEvent.layout.y)
+        updateOffset({id: id, position: event.nativeEvent.layout.y})
     }
 
     async function tuneIn() {
+        console.log(`playing: ${station.title}`);
         const shadow = shuffle(stations)
 
-        const q = await TrackPlayer.getQueue()
-        const state = await TrackPlayer.getState()
-        if ((state === State.Playing && q[0].url === station.url) || state === State.Buffering) return
-
-        // console.log(`switching to ${station.title} -> ${stations[0].title}`);
-        updateLivestream(id)
         await TrackPlayer.reset()
         await TrackPlayer.add(shadow)
         await TrackPlayer.add(station, 0)
+        await TrackPlayer.skip(0)
         await TrackPlayer.play()
+        
     }
 
     return (
