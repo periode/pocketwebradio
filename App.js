@@ -111,12 +111,11 @@ const App = () => {
   const handleScroll = async (event) => {
     const currentOffset = event.nativeEvent.contentOffset.y + 300
     const q = await TrackPlayer.getQueue()
-    console.log(q);
     const state = await TrackPlayer.getState()
 
     if (state === State.Buffering) return  
     
-    let toPlay = currentLivestream
+    let toPlay = 0
     for (let i = 0; i < offsets.length; i++) {
       const pos = offsets[i].position;
       if (currentOffset > pos - 50 && currentOffset < pos + 140 && currentLivestream != -1){

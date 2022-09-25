@@ -51,17 +51,24 @@ const Tuner = ({ updateLivestream, current }) => {
     const sizeAnim = useRef(new Animated.Value(minWidth)).current
 
     useEffect(() => {
-        if(current === -1)
+        if (current === -1)
             setTunedIn(false)
-    }, [current])
-
-    useEffect(() => {
-        if(!isTunedIn){
+        else if (current === 0){
             async function stop() {
                 await TrackPlayer.pause()
                 await TrackPlayer.reset()
             }
-            stop()            
+            stop()
+        }
+    }, [current])
+
+    useEffect(() => {
+        if (!isTunedIn) {
+            async function stop() {
+                await TrackPlayer.pause()
+                await TrackPlayer.reset()
+            }
+            stop()
         }
 
         Animated.timing(
