@@ -56,7 +56,7 @@ const Tuner = ({ updateLivestream, current }) => {
     }, [current])
 
     useEffect(() => {
-        if(isTunedIn){
+        if(!isTunedIn){
             async function stop() {
                 await TrackPlayer.pause()
                 await TrackPlayer.reset()
