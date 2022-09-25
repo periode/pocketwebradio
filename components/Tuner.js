@@ -31,6 +31,8 @@ const styles = StyleSheet.create({
         color: isDarkMode ? 'black' : 'ivory',
         textAlign: 'center',
         fontSize: 20,
+        lineHeight: 60,
+        height: '100%'
     },
     highlight: {
         fontWeight: '700',
@@ -40,7 +42,7 @@ const styles = StyleSheet.create({
 const tuneOutText = ">"
 const tuneInText = "<"
 let isDarkMode = 'dark'
-const Tuner = ({ updateLivestream, isPlaying }) => {
+const Tuner = ({ updateLivestream }) => {
     isDarkMode = useColorScheme() === 'dark';
     const maxWidth = 175
     const minWidth = 100
@@ -48,7 +50,6 @@ const Tuner = ({ updateLivestream, isPlaying }) => {
     const [isTunedIn, setTunedIn] = useState(false)
     const sizeAnim = useRef(new Animated.Value(minWidth)).current
 
-    //todo check if isTunedIn before playing station
     useEffect(() => {
         Animated.timing(
             sizeAnim,

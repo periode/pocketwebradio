@@ -3,7 +3,8 @@
 ## present
 
 - [x] make sure you never connect if the tuner is not set
-- [ ] make tune input area larger
+- [x] make tune input area larger
+- [ ] invert scroll direction
 - [ ] disconnect when you move away from station
 
 ## past
