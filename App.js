@@ -3,7 +3,6 @@ import TrackPlayer, { Capability, State } from 'react-native-track-player';
 import {
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   useColorScheme,
   View,
@@ -13,7 +12,10 @@ import Station from './components/Station';
 import Tuner from './components/Tuner';
 import Header from './components/Header'
 
+import {shuffle} from './utils'
+
 //-- currentLivestream
+//
 // null - player not setup
 // -1 - player setup, tuned out
 // 0 - player setup, tuned in
@@ -21,6 +23,7 @@ import Header from './components/Header'
 
 let isDarkMode = 'dark'
 const REMOTE_ENDPOINT = "https://static.enframed.net/stations.json"
+const stations = [...require('./stations.json')]
 
 const App = () => {
   const [log, setLog] = useState(String)
@@ -30,37 +33,18 @@ const App = () => {
   const scrollViewRef = useRef(null)
   isDarkMode = useColorScheme() === 'dark';
 
-  const shuffle = (array) => {
-    let currentIndex = array.length, randomIndex;
-
-    // While there remain elements to shuffle.
-    while (currentIndex != 0) {
-
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-
-    return array;
-  }
 
   useEffect(() => {
     setup()
-    setStationsList(shuffle(require('./stations.json')))
-    // fetchStations()
+    setStationsList(shuffle(stations))
+    fetchStations()
   }, [])
 
   async function setup() {
     try {
       // this method will only reject if player has not been setup yet
       await TrackPlayer.getCurrentTrack()
-      console.log('already set up');
     } catch {
-      console.log('setting up new...');
       await TrackPlayer.setupPlayer();
       await TrackPlayer.updateOptions({
         stoppingAppPausesPlayback: true,
@@ -83,19 +67,17 @@ const App = () => {
         ],
       });
       setCurrentLivestream(-1)
-    } finally {
-      console.log('finished setup check');
     }
   }
 
   const fetchStations = () => {
-    fetch(REMOTE_ENDPOINT)
+    fetch(`${REMOTE_ENDPOINT}?q=${Math.floor(Math.random()*2046)}`)
       .then(res => {
         if (res.ok) {
           return res.json()
         }
         else {
-          setStationsList(shuffle(require('./stations.json')))
+          setStationsList(shuffle(stations))
         }
       })
       .then(data => {
@@ -105,10 +87,7 @@ const App = () => {
       .catch(err => {
         setLog(err)
         console.log(`failed, loading the backup list`)
-        setStationsList(shuffle(require('./stations.json')))
-      })
-      .finally(() => {
-        console.log('finished loading')
+        setStationsList(shuffle(stations))
       })
   }
 
@@ -117,28 +96,25 @@ const App = () => {
     if(currentLivestream === -1) return  
 
     const state = await TrackPlayer.getState()
-    if (state === State.Buffering) return  
+    if (state === State.Buffering) return
     
-    let toPlay = 0
+    let stream = 0
     for (let i = 0; i < offsets.length; i++) {
       const pos = offsets[i].position;
-      if (currentOffset > pos - 50 && currentOffset < pos + 140){
-        // console.log(`playing: ${offsets[i].id}`);
-        toPlay = offsets[i].id
-      } 
+      if (currentOffset > pos - 50 && currentOffset < pos + 140)
+        stream = offsets[i].id
     }
 
-    setCurrentLivestream(toPlay)
+    setCurrentLivestream(stream)
   }
 
-  //-- used for signaling tune out by the tuner
+  //-- also used for tuning out
   const updateLivestream = (_stream) => {
     setCurrentLivestream(_stream)
   }
 
-  //-- on first layout, gets the offset of each station
+  //-- on first layout, store the offset of each station
   const handleStationOffset = (_offset) => {
-    console.log(`setting station offset: ${JSON.stringify(_offset)}`);
     setOffsets([
       ...offsets,
       _offset
@@ -152,7 +128,6 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         ref={scrollViewRef} onContentSizeChange={() => {scrollViewRef.current?.scrollToEnd()}}

@@ -7,27 +7,17 @@ import {
 } from 'react-native';
 
 const styles = StyleSheet.create({
-    foregroundStyle: {
-      backgroundColor: isDarkMode ? 'black' : 'ivory',
-    },
-    backgroundStyle: {
-      backgroundColor: isDarkMode ? 'black' : 'ivory',
-      flex: 1,
-    },
     headerContainer: {
       height: 300,
       padding: 6,
       transform: [{ translateX: 200 }, { translateY: -50 }, { rotateZ: '-49deg' }]
     },
     headerText: {
-      color: isDarkMode ? 'ivory' : 'black',
       fontSize: 11,
     }
 })
 
-let isDarkMode = 'dark'
 const Header = () => {
-    isDarkMode = useColorScheme() === 'dark';
     return (
         <View style={styles.headerContainer}>
             <Text

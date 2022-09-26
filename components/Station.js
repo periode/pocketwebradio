@@ -3,9 +3,9 @@ import TrackPlayer from 'react-native-track-player';
 import {
     StyleSheet,
     Text,
-    useColorScheme,
     View,
 } from 'react-native';
+import {shuffle} from '../utils'
 
 const styles = StyleSheet.create({
     stationContainer: {
@@ -25,12 +25,11 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: '600',
         fontFamily: 'Inter',
-        color: isDarkMode ? 'black' : 'ivory'
     },
-    streamIdle: {
+    idle: {
         opacity: 0.75,
     },
-    streamPlaying: {
+    playing: {
         opacity: 1,
     },
     stationDescription: {
@@ -46,30 +45,16 @@ const styles = StyleSheet.create({
 });
 
 const stations = [...require('../stations.json')]
-let isDarkMode = 'dark'
 
 function Station({ station, id, current, updateOffset }) {
-    isDarkMode = useColorScheme() === 'dark';
-
+    const [tunedState, setTunedState] = useState('')
     useEffect(() => {
         if(current === id)
             tuneIn()
+        else
+            setTunedState('idle')
 
     }, [current])
-
-    const shuffle = (array) => {
-        let currentIndex = array.length, randomIndex;
-
-        while (currentIndex != 0) {
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-
-            [array[currentIndex], array[randomIndex]] = [
-                array[randomIndex], array[currentIndex]];
-        }
-
-        return array;
-    }
 
     const handleLayout = (event) => {
         updateOffset({id: id, position: event.nativeEvent.layout.y})
@@ -84,20 +69,20 @@ function Station({ station, id, current, updateOffset }) {
         await TrackPlayer.add(station, 0)
         await TrackPlayer.skip(0)
         await TrackPlayer.play()
-        
+        setTunedState('tuned in')
     }
 
     return (
-        <View style={styles.stationContainer}
+        <View style={[styles.stationContainer, current == id ? styles.playing : styles.idle]}
             onLayout={handleLayout}>
             <Text
                 onPress={() => { tuneIn }}
-                style={[styles.stationTitle, current == id ? styles.streamPlaying : styles.streamIdle]}>
+                style={styles.stationTitle}>
                 {station.title}
             </Text>
             <Text
                 style={[styles.stationDescription]}>
-                {current == id ? 'tuned in' : 'idle'}
+                { tunedState }
             </Text>
         </View>
     );

@@ -4,17 +4,9 @@ import {
     Animated,
     StyleSheet,
     Text,
-    useColorScheme,
 } from 'react-native';
 
 const styles = StyleSheet.create({
-    foregroundStyle: {
-        backgroundColor: isDarkMode ? 'black' : 'ivory',
-    },
-    backgroundStyle: {
-        backgroundColor: isDarkMode ? 'black' : 'ivory',
-        flex: 1,
-    },
     tuneOut: {
         position: 'absolute',
         right: 0,
@@ -23,28 +15,27 @@ const styles = StyleSheet.create({
         fontSize: 24,
         margin: 20,
         height: 75,
-        borderColor: isDarkMode ? 'black' : 'ivory',
+        borderColor: 'ivory',
         borderWidth: 2,
-        backgroundColor: isDarkMode ? 'ivory' : 'black',
     },
     tuneOutText: {
-        color: isDarkMode ? 'black' : 'ivory',
         textAlign: 'center',
         fontSize: 20,
         lineHeight: 60,
         height: '100%'
     },
-    highlight: {
-        fontWeight: '700',
+    idle: {
+        opacity: 0.75,
+    },
+    playing: {
+        opacity: 1,
     },
 });
 
-const tuneOutText = ">"
+const tuneOutText = ""
 const tuneInText = "<"
-let isDarkMode = 'dark'
 
 const Tuner = ({ updateLivestream, current }) => {
-    isDarkMode = useColorScheme() === 'dark';
     const maxWidth = 175
     const minWidth = 100
     const [status, setStatus] = useState(tuneOutText)
@@ -80,7 +71,7 @@ const Tuner = ({ updateLivestream, current }) => {
                 useNativeDriver: false
             }
         ).start()
-        
+
         setStatus(isTunedIn ? tuneOutText : tuneInText)
         updateLivestream(isTunedIn ? 0 : -1)
     }, [sizeAnim, isTunedIn])
@@ -90,7 +81,9 @@ const Tuner = ({ updateLivestream, current }) => {
     }
 
     return (
-        <Animated.View style={[styles.tuneOut, {
+        <Animated.View style={[styles.tuneOut, 
+            current > 0 ? styles.playing : styles.idle,
+            {
             width: sizeAnim
         }]}>
             <Text style={styles.tuneOutText} onPress={() => { handleTuningIn() }}>{status}</Text>

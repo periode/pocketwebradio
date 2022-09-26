@@ -5,7 +5,7 @@
 - [x] make sure you never connect if the tuner is not set
 - [x] make tune input area larger
 - [x] invert scroll direction
-- [ ] set dark mode as context
+- [ ] animate sounds and opacity change
 - [x] disconnect when you move away from station
 
 ## past
