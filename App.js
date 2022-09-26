@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TrackPlayer, { Capability, State } from 'react-native-track-player';
 import {
   SafeAreaView,
@@ -13,7 +13,11 @@ import Station from './components/Station';
 import Tuner from './components/Tuner';
 import Header from './components/Header'
 
-
+//-- currentLivestream
+// null - player not setup
+// -1 - player setup, tuned out
+// 0 - player setup, tuned in
+// [1+] - player setup, playing
 
 let isDarkMode = 'dark'
 const REMOTE_ENDPOINT = "https://static.enframed.net/stations.json"
@@ -21,9 +25,9 @@ const REMOTE_ENDPOINT = "https://static.enframed.net/stations.json"
 const App = () => {
   const [log, setLog] = useState(String)
   const [stationsList, setStationsList] = useState(Array)
-  const [currentLivestream, setCurrentLivestream] = useState(-1)
+  const [currentLivestream, setCurrentLivestream] = useState(null) 
   const [offsets, setOffsets] = useState([])
-
+  const scrollViewRef = useRef(null)
   isDarkMode = useColorScheme() === 'dark';
 
   const shuffle = (array) => {
@@ -110,15 +114,15 @@ const App = () => {
 
   const handleScroll = async (event) => {
     const currentOffset = event.nativeEvent.contentOffset.y + 300
-    const q = await TrackPlayer.getQueue()
-    const state = await TrackPlayer.getState()
+    if(currentLivestream === -1) return  
 
+    const state = await TrackPlayer.getState()
     if (state === State.Buffering) return  
     
     let toPlay = 0
     for (let i = 0; i < offsets.length; i++) {
       const pos = offsets[i].position;
-      if (currentOffset > pos - 50 && currentOffset < pos + 140 && currentLivestream != -1){
+      if (currentOffset > pos - 50 && currentOffset < pos + 140){
         // console.log(`playing: ${offsets[i].id}`);
         toPlay = offsets[i].id
       } 
@@ -151,9 +155,10 @@ const App = () => {
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
+        ref={scrollViewRef} onContentSizeChange={() => {scrollViewRef.current?.scrollToEnd()}}
         style={styles.backgroundStyle}
         onScroll={handleScroll}>
-        <View style={styles.foregroundStyle}>
+        <View style={[styles.foregroundStyle, styles.stationsContainer]}>
           <Header />
           {stationElements}
         </View>
@@ -171,27 +176,9 @@ const styles = StyleSheet.create({
     backgroundColor: isDarkMode ? 'black' : 'ivory',
     flex: 1,
   },
-  tuneOut: {
-    position: 'absolute',
-    right: 0,
-    top: 300,
-    textAlign: 'center',
-    fontSize: 24,
-    margin: 20,
-    padding: 20,
-    height: 80,
-    borderColor: isDarkMode ? 'ivory' : 'black',
-    borderWidth: 2,
-    backgroundColor: 'black',
-  },
-  tuneOutText: {
-    color: isDarkMode ? 'ivory' : 'black',
-    textAlign: 'center',
-    fontSize: 24,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  stationsContainer: {
+    paddingBottom: 600,
+  }
 });
 
 export default App;

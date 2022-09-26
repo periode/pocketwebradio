@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
 const tuneOutText = ">"
 const tuneInText = "<"
 let isDarkMode = 'dark'
+
 const Tuner = ({ updateLivestream, current }) => {
     isDarkMode = useColorScheme() === 'dark';
     const maxWidth = 175
@@ -79,6 +80,7 @@ const Tuner = ({ updateLivestream, current }) => {
                 useNativeDriver: false
             }
         ).start()
+        
         setStatus(isTunedIn ? tuneOutText : tuneInText)
         updateLivestream(isTunedIn ? 0 : -1)
     }, [sizeAnim, isTunedIn])
