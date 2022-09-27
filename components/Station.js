@@ -16,25 +16,26 @@ const styles = StyleSheet.create({
         marginTop: 150,
         marginBottom: 200,
         borderRightColor: 'ivory',
-        borderRightWidth: 2,
+        borderRightWidth: 1,
 
         justifyContent: 'center',
         paddingHorizontal: 24,
     },
     stationTitle: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: '600',
         fontFamily: 'Inter',
+        color: 'white',
     },
     idle: {
-        opacity: 0.75,
+        opacity: 0.5,
     },
     playing: {
         opacity: 1,
     },
     stationDescription: {
         marginTop: 8,
-        fontSize: 18,
+        fontSize: 12,
         fontWeight: '400',
         fontSize: 12,
         fontStyle: 'italic'
@@ -48,6 +49,7 @@ const stations = [...require('../stations.json')]
 
 function Station({ station, id, current, updateOffset }) {
     const [tunedState, setTunedState] = useState('')
+
     useEffect(() => {
         if(current === id)
             tuneIn()

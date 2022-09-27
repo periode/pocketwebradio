@@ -208,5 +208,10 @@
         "title": "france culture",
         "artist": "live",
         "url": "http://icecast.radiofrance.fr/franceculture-hifi.aac"
+    },
+    {
+	"title": "worldwide fm",
+	"artist": "live",
+	"url": "https://worldwidefm.out.airtime.pro/worldwidefm_b"
     }
 ]

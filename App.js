@@ -12,7 +12,7 @@ import Station from './components/Station';
 import Tuner from './components/Tuner';
 import Header from './components/Header'
 
-import {shuffle} from './utils'
+import { shuffle } from './utils'
 
 //-- currentLivestream
 //
@@ -28,7 +28,8 @@ const stations = [...require('./stations.json')]
 const App = () => {
   const [log, setLog] = useState(String)
   const [stationsList, setStationsList] = useState(Array)
-  const [currentLivestream, setCurrentLivestream] = useState(null) 
+  const [currentLivestream, setCurrentLivestream] = useState(null)
+  const [currentOffset, setCurrentOffset] = useState(null)
   const [offsets, setOffsets] = useState([])
   const scrollViewRef = useRef(null)
   isDarkMode = useColorScheme() === 'dark';
@@ -67,18 +68,17 @@ const App = () => {
         ],
       });
       setCurrentLivestream(-1)
+      scrollViewRef.current?.scrollToEnd()
     }
   }
 
   const fetchStations = () => {
-    fetch(`${REMOTE_ENDPOINT}?q=${Math.floor(Math.random()*2046)}`)
+    fetch(`${REMOTE_ENDPOINT}?q=${Math.floor(Math.random() * 2046)}`)
       .then(res => {
-        if (res.ok) {
+        if (res.ok)
           return res.json()
-        }
-        else {
+        else
           setStationsList(shuffle(stations))
-        }
       })
       .then(data => {
         console.log(`fetched ${data.length} stations`)
@@ -91,13 +91,17 @@ const App = () => {
       })
   }
 
-  const handleScroll = async (event) => {
-    const currentOffset = event.nativeEvent.contentOffset.y + 300
-    if(currentLivestream === -1) return  
+  useEffect(() => {
+    if(currentLivestream >= 0)
+      tuneIn()
+  }, [currentOffset, currentLivestream])
+
+  const tuneIn = async() => {
+    if (currentLivestream == -1) return
 
     const state = await TrackPlayer.getState()
     if (state === State.Buffering) return
-    
+
     let stream = 0
     for (let i = 0; i < offsets.length; i++) {
       const pos = offsets[i].position;
@@ -106,6 +110,10 @@ const App = () => {
     }
 
     setCurrentLivestream(stream)
+  }
+
+  const handleScroll = async (event) => {
+    setCurrentOffset(event.nativeEvent.contentOffset.y + 300)
   }
 
   //-- also used for tuning out
@@ -130,7 +138,7 @@ const App = () => {
     <SafeAreaView style={styles.backgroundStyle}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        ref={scrollViewRef} onContentSizeChange={() => {scrollViewRef.current?.scrollToEnd()}}
+        ref={scrollViewRef}
         style={styles.backgroundStyle}
         onScroll={handleScroll}>
         <View style={[styles.foregroundStyle, styles.stationsContainer]}>

@@ -14,9 +14,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 24,
         margin: 20,
-        height: 75,
+        height: 15,
         borderColor: 'ivory',
-        borderWidth: 2,
+        borderWidth: 1,
     },
     tuneOutText: {
         textAlign: 'center',
@@ -36,33 +36,31 @@ const tuneOutText = ""
 const tuneInText = "<"
 
 const Tuner = ({ updateLivestream, current }) => {
-    const maxWidth = 175
-    const minWidth = 100
+    const maxWidth = 170
+    const minWidth = 75
     const [status, setStatus] = useState(tuneOutText)
     const [isTunedIn, setTunedIn] = useState(false)
     const sizeAnim = useRef(new Animated.Value(minWidth)).current
 
+    async function stop() {
+        try {
+            await TrackPlayer.pause()
+            await TrackPlayer.reset()
+        }catch {
+            console.log('not stopping, since not setup');
+        }
+    }
+
     useEffect(() => {
-        if (current === -1)
+        if (current === -1) {
             setTunedIn(false)
-        else if (current === 0){
-            async function stop() {
-                await TrackPlayer.pause()
-                await TrackPlayer.reset()
-            }
+            stop()
+        } else if (current === 0) {
             stop()
         }
     }, [current])
 
     useEffect(() => {
-        if (!isTunedIn) {
-            async function stop() {
-                await TrackPlayer.pause()
-                await TrackPlayer.reset()
-            }
-            stop()
-        }
-
         Animated.timing(
             sizeAnim,
             {
@@ -81,9 +79,9 @@ const Tuner = ({ updateLivestream, current }) => {
     }
 
     return (
-        <Animated.View style={[styles.tuneOut, 
-            current > 0 ? styles.playing : styles.idle,
-            {
+        <Animated.View style={[styles.tuneOut,
+        current > 0 ? styles.playing : styles.idle,
+        {
             width: sizeAnim
         }]}>
             <Text style={styles.tuneOutText} onPress={() => { handleTuningIn() }}>{status}</Text>

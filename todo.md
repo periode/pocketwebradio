@@ -2,14 +2,12 @@
 
 ## present
 
-- [x] make sure you never connect if the tuner is not set
-- [x] make tune input area larger
-- [x] invert scroll direction
 - [ ] animate sounds and opacity change
-- [x] disconnect when you move away from station
+
 
 ## past
 
+- [x] disconnect when you move away from station
 - [x] get state of track player to see if it's buffering: if yes, don't load (not sure, how to deal with pending loads?)
 - [x] add radio icon
 - [x] add randomizing of stations
@@ -24,7 +22,8 @@
 - [x] animation on tuning button
     - [x] how to get the button to expand on radio playback?
 - [x] fill content of json
-
-## future
-
-- [ ] implement double-play button on bluetooth speaker as 'nextStation'
+- [x] implement double-play button on bluetooth speaker as 'nextStation'
+- [x] make sure you never connect if the tuner is not set
+- [x] make tune input area larger
+- [x] invert scroll direction
+- [x] tune in when you toggle tuner on station
