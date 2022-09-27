@@ -2,15 +2,21 @@ import React, { useState, useRef, useEffect } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import {
     Animated,
+    TouchableHighlight,
     StyleSheet,
     Text,
+    View,
 } from 'react-native';
 
 const styles = StyleSheet.create({
-    tuneOut: {
+    tunerContainer: {
         position: 'absolute',
         right: 0,
         top: 300,
+        paddingTop: 40,
+        paddingBottom: 40,
+    },
+    tuneOut: {
         textAlign: 'center',
         fontSize: 24,
         margin: 20,
@@ -46,7 +52,7 @@ const Tuner = ({ updateLivestream, current }) => {
         try {
             await TrackPlayer.pause()
             await TrackPlayer.reset()
-        }catch {
+        } catch {
             console.log('not stopping, since not setup');
         }
     }
@@ -79,13 +85,15 @@ const Tuner = ({ updateLivestream, current }) => {
     }
 
     return (
-        <Animated.View style={[styles.tuneOut,
-        current > 0 ? styles.playing : styles.idle,
-        {
-            width: sizeAnim
-        }]}>
-            <Text style={styles.tuneOutText} onPress={() => { handleTuningIn() }}>{status}</Text>
-        </Animated.View>
+        <TouchableHighlight style={styles.tunerContainer} onPress={() => { handleTuningIn() }}>
+            <Animated.View style={[styles.tuneOut,
+            current > 0 ? styles.playing : styles.idle,
+            {
+                width: sizeAnim
+            }]}>
+                <Text style={styles.tuneOutText}>{status}</Text>
+            </Animated.View>
+        </TouchableHighlight>
     )
 }
 
