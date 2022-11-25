@@ -1,4 +1,4 @@
-package com.webradios.newarchitecture;
+package com.pocketwebradio.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.webradios.BuildConfig;
-import com.webradios.newarchitecture.components.MainComponentsRegistry;
-import com.webradios.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.pocketwebradio.BuildConfig;
+import com.pocketwebradio.newarchitecture.components.MainComponentsRegistry;
+import com.pocketwebradio.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

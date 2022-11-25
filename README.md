@@ -1,11 +1,29 @@
-# todo
+# pocketwebradio
 
-## present
+a mobile application which aggregates the pocketwebradio I bookmarked throughout the years.
+
+- all radio stations are pulled by an online version of `stations.json`
+- scrolling is bottom-up
+- each time a station starts to play, it queues all other stations randomly—so that you can press the next button and not know what's coming next.
+
+## install
+
+the app is based on `react-native@0.69.5` and `react-native-track-player@^3.1.0`. it builds on android, but i haven't tried on ios.
+
+## screenshots
+
+<img src="./assets/documentation/doc_1.png" width="200"/> <img src="./assets/documentation/doc_2.png" width="200"/>
+
+## todo
+
+### present
 
 - [ ] animate sounds and opacity change
+- [ ] hide radio name until tuned in
+- [ ] handle unresponsive stations
 
 
-## past
+### past
 
 - [x] disconnect when you move away from station
 - [x] get state of track player to see if it's buffering: if yes, don't load (not sure, how to deal with pending loads?)

@@ -21,15 +21,15 @@ const Header = () => {
         <View style={styles.headerContainer}>
             <Text
                 style={styles.headerText}>
-                webradios
+                pocket
             </Text>
             <Text
                 style={styles.headerText}>
-                webradios
+                web
             </Text>
             <Text
                 style={styles.headerText}>
-                webradios
+                radio
             </Text>
         </View>
     );

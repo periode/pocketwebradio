@@ -1,6 +1,6 @@
 {
-  "name": "webradios",
-  "displayName": "webradios",
+  "name": "pocketwebradio",
+  "displayName": "pocketwebradio",
   "svgAppIcon": {
     "foregroundPath": "./icon.svg",
     "platforms": ["android"],

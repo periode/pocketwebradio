@@ -1,7 +1,7 @@
 {
-  "name": "webradios",
-  "version": "0.0.1",
-  "private": true,
+  "name": "pocketwebradio",
+  "version": "1.0.0",
+  "private": false,
   "scripts": {
     "android": "react-native run-android --active-arch-only",
     "ios": "react-native run-ios",

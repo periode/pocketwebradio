@@ -1,4 +1,4 @@
-package com.webradios;
+package com.pocketwebradio;
 import expo.modules.ReactActivityDelegateWrapper;
 
 import com.facebook.react.ReactActivity;
@@ -13,7 +13,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "webradios";
+    return "pocketwebradio";
   }
 
   /**

@@ -1,4 +1,4 @@
-package com.webradios.newarchitecture.components;
+package com.pocketwebradio.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
