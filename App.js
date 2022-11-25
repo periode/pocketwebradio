@@ -67,8 +67,10 @@ const App = () => {
           Capability.SkipToNext,
         ],
       });
+
       setCurrentLivestream(-1)
-      scrollViewRef.current?.scrollToEnd()
+      if(scrollViewRef.current)
+        scrollViewRef.current.scrollToEnd()
     }
   }
 
@@ -96,6 +98,7 @@ const App = () => {
       tuneIn()
   }, [currentOffset, currentLivestream])
 
+  //-- tuneIn checks which stream to set based on the current tuner position on the screen
   const tuneIn = async() => {
     if (currentLivestream == -1) return
 
@@ -116,7 +119,7 @@ const App = () => {
     setCurrentOffset(event.nativeEvent.contentOffset.y + 300)
   }
 
-  //-- also used for tuning out
+  //-- when given a value of -1, used for tuning out
   const updateLivestream = (_stream) => {
     setCurrentLivestream(_stream)
   }

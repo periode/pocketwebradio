@@ -185,8 +185,8 @@
         "url": "https://netilradio.out.airtime.pro/netilradio_a"
     },
     {
-        "title":"deutschlandfunk kultur",
-        "artist":"dlive",
+        "title": "deutschlandfunk kultur",
+        "artist": "live",
         "url": "https://f131.rndfnk.com/ard/dlf/02/mp3/128/stream.mp3?aggregator=web&cid=01FBPXKD7AYM1NKT2H60NVGHEQ&sid=2EujdSyuhoOQQHy5taVivl8VWOx&token=DjAY6oROpmresKh46MEtilcG19n21npq535DnaBOnKw&tvf=7s1fyNXYFRdmMTMxLnJuZGZuay5jb20"
     },
     {
@@ -210,8 +210,13 @@
         "url": "http://icecast.radiofrance.fr/franceculture-hifi.aac"
     },
     {
-	"title": "worldwide fm",
-	"artist": "live",
-	"url": "https://worldwidefm.out.airtime.pro/worldwidefm_b"
+        "title": "worldwide fm",
+        "artist": "live",
+        "url": "https://worldwidefm.out.airtime.pro/worldwidefm_b"
+    },
+    {
+        "title": "radio worm",
+        "artist": "live",
+        "url": "https://s2.radio.co/sde6c7b42e/listen"
     }
 ]

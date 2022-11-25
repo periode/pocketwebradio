@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     },
 });
 
+//-- make a copy of the array
 const stations = [...require('../stations.json')]
 
 function Station({ station, id, current, updateOffset }) {
