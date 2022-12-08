@@ -1,6 +1,6 @@
 # pocketwebradio
 
-a mobile application which aggregates the pocketwebradio I bookmarked throughout the years.
+a mobile application which aggregates the webradios I bookmarked throughout the years.
 
 - all radio stations are pulled by an online version of `stations.json`
 - scrolling is bottom-up
