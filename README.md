@@ -10,6 +10,8 @@ a mobile application which aggregates the pocketwebradio I bookmarked throughout
 
 the app is based on `react-native@0.69.5` and `react-native-track-player@^3.1.0`. it builds on android, but i haven't tried on ios.
 
+you can also download it from the [play store](https://play.google.com/store/apps/details?id=com.pocketwebradio).
+
 ## screenshots
 
 <img src="./assets/documentation/doc_1.png" width="200"/> <img src="./assets/documentation/doc_2.png" width="200"/>

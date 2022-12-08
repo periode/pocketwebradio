@@ -12,8 +12,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 0,
         top: 300,
-        paddingTop: 40,
-        paddingBottom: 40,
+        paddingTop: 25,
+        paddingBottom: 25,
     },
     tuneOut: {
         textAlign: 'center',

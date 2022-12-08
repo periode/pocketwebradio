@@ -32,7 +32,7 @@
     {
         "title": "radio alhara",
         "artist": "live",
-        "url": "http://n0a.radiojar.com/78cxy6wkxtzuv?1663415326=&rj-tok=AAABg0tShgEA8Hs72XfKLaymlw&rj-ttl=5"
+        "url": "http://n04.radiojar.com/78cxy6wkxtzuv?1670176009=&rj-tok=AAABhN5Kaz4ApJEyVBGNaBgcFQ&rj-ttl=5"
     },
     {
         "title": "20ft radio",
@@ -218,5 +218,15 @@
         "title": "radio worm",
         "artist": "live",
         "url": "https://s2.radio.co/sde6c7b42e/listen"
+    },
+    {
+	"title": "wkkc chicago",
+	"artist": "live",
+	"url":"https://ico-1.streamhoster.com/lv_wkkcfm1--broadcast1"
+    },
+    {
+	"title": "kiosk radio",
+	"artist": "live",
+	"url": "https://kioskradiobxl.out.airtime.pro/kioskradiobxl_b"
     }
 ]
