@@ -228,5 +228,15 @@
 	"title": "kiosk radio",
 	"artist": "live",
 	"url": "https://kioskradiobxl.out.airtime.pro/kioskradiobxl_b"
+    },
+    {
+	"title": "wfmu",
+	"artist": "live",
+	"url":"https://stream0.wfmu.org/freeform-128k.mp3"
+    },
+    {
+	"title": "balamii",
+	"artist": "live",
+	"url": "https://balamii.out.airtime.pro/balamii_a"
     }
 ]
