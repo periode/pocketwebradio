@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  TouchableHighlight,
   useColorScheme,
   View,
 } from 'react-native';
@@ -11,6 +12,7 @@ import {
 import Station from './components/Station';
 import Tuner from './components/Tuner';
 import Header from './components/Header'
+import Footer from './components/Footer'
 
 import { shuffle } from './utils'
 
@@ -31,6 +33,7 @@ const App = () => {
   const [currentLivestream, setCurrentLivestream] = useState(null)
   const [currentOffset, setCurrentOffset] = useState(null)
   const [offsets, setOffsets] = useState([])
+  const [bandwidth, setBandwidth] = useState("narrow")
   const scrollViewRef = useRef(null)
   isDarkMode = useColorScheme() === 'dark';
 
@@ -69,8 +72,6 @@ const App = () => {
       });
 
       setCurrentLivestream(-1)
-      if(scrollViewRef.current)
-        scrollViewRef.current.scrollToEnd()
     }
   }
 
@@ -83,7 +84,7 @@ const App = () => {
           setStationsList(shuffle(stations))
       })
       .then(data => {
-        console.log(`fetched ${data.length} stations`)
+        console.log(`fetched ${data.length} stations from remote`)
         setStationsList(shuffle(data))
       })
       .catch(err => {
@@ -94,12 +95,12 @@ const App = () => {
   }
 
   useEffect(() => {
-    if(currentLivestream >= 0)
+    if (currentLivestream >= 0)
       tuneIn()
   }, [currentOffset, currentLivestream])
 
   //-- tuneIn checks which stream to set based on the current tuner position on the screen
-  const tuneIn = async() => {
+  const tuneIn = async () => {
     if (currentLivestream == -1) return
 
     const state = await TrackPlayer.getState()
@@ -132,9 +133,16 @@ const App = () => {
     ])
   }
 
+  const toggleBandwidth = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    setBandwidth(bandwidth === "narrow" ? "wide" : "narrow")
+  }
+
   let stationElements = []
   for (let i = 0; i < stationsList.length; i++) {
-    stationElements.push(<Station station={stationsList[i]} key={i + 1} id={i + 1} current={currentLivestream} updateOffset={handleStationOffset}></Station>)
+    stationElements.push(<Station station={stationsList[i]} key={i + 1} id={i + 1} current={currentLivestream} updateOffset={handleStationOffset} bandwidth={bandwidth}></Station>)
   }
 
   return (
@@ -145,8 +153,13 @@ const App = () => {
         style={styles.backgroundStyle}
         onScroll={handleScroll}>
         <View style={[styles.foregroundStyle, styles.stationsContainer]}>
-          <Header />
+          <TouchableHighlight onPress={toggleBandwidth}>
+            <Header />
+          </TouchableHighlight>
           {stationElements}
+          <TouchableHighlight style={{width: "100%", height: 200, marginTop: 150}} onPress={() => {scrollViewRef.current.scrollTo({x: 0})}}>
+            <Footer />
+          </TouchableHighlight>
         </View>
       </ScrollView>
       <Tuner updateLivestream={updateLivestream} current={currentLivestream} isPlaying={currentLivestream !== -1}></Tuner>

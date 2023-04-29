@@ -22,7 +22,7 @@ you can also download it from the [play store](https://play.google.com/store/app
 
 - [ ] animate sounds and opacity change
 - [ ] hide radio name until tuned in
-- [ ] handle unresponsive stations
+- [ ] handle unresponsive stations (m3u is the spot)
 
 
 ### past
@@ -47,3 +47,5 @@ you can also download it from the [play store](https://play.google.com/store/app
 - [x] make tune input area larger
 - [x] invert scroll direction
 - [x] tune in when you toggle tuner on station
+
+<!-- unset LD_LIBRARY_PATH -->

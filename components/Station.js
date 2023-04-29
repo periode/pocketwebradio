@@ -43,12 +43,24 @@ const styles = StyleSheet.create({
     highlight: {
         fontWeight: '700',
     },
+    compressedView: {
+        height: 30,
+        width: 200,
+        marginTop: 12,
+        marginBottom: 10,
+    },
+    expandedView: {
+        height: 200,
+        width: 200,
+        marginTop: 150,
+        marginBottom: 200,
+    }
 });
 
 //-- make a copy of the array
 const stations = [...require('../stations.json')]
 
-function Station({ station, id, current, updateOffset }) {
+function Station({ station, id, current, updateOffset, bandwidth }) {
     const [tunedState, setTunedState] = useState('')
 
     useEffect(() => {
@@ -56,15 +68,14 @@ function Station({ station, id, current, updateOffset }) {
             tuneIn()
         else
             setTunedState('idle')
-
     }, [current])
 
-    const handleLayout = (event) => {
-        updateOffset({id: id, position: event.nativeEvent.layout.y})
+    const handleLayout = (e) => {
+        updateOffset({id: id, position: e.nativeEvent.layout.y})
     }
 
     async function tuneIn() {
-        console.log(`playing: ${station.title}`);
+        console.log(`tuning in to: ${station.title}`);
         const shadow = shuffle(stations)
 
         await TrackPlayer.reset()
@@ -76,7 +87,7 @@ function Station({ station, id, current, updateOffset }) {
     }
 
     return (
-        <View style={[styles.stationContainer, current == id ? styles.playing : styles.idle]}
+        <View style={[styles.stationContainer, current == id ? styles.playing : styles.idle, bandwidth === "narrow" ? styles.compressedView : styles.expandedView]}
             onLayout={handleLayout}>
             <Text
                 onPress={() => { tuneIn }}
