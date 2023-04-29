@@ -22,7 +22,7 @@ import { shuffle } from './utils'
 // [1+] - player setup, playing
 
 let isDarkMode = 'dark'
-const REMOTE_ENDPOINT = "https://static.enframed.net/stations.json"
+const REMOTE_ENDPOINT = "https://webradios.enframed.net/stations"
 const stations = [...require('./stations.json')]
 
 const App = () => {
